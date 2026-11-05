@@ -29,7 +29,7 @@ A badge showing only the mod's name:
 https://windhawk-badges.luizbizzio.workers.dev/badges/taskbar-zones/mod.svg
 ```
 
-The Mod name badge links to `https://windhawk.net/mods/<mod-id>`. The GitHub badge links to the `metadata.github` URL in the official catalog, which can be an author profile rather than a repository. If the catalog has no valid GitHub URL, the GitHub Markdown action is disabled.
+The Mod name badge links to `https://windhawk.net/mods/<mod-id>`. The GitHub badge shows the username from `metadata.github` and links to that GitHub profile. If the metadata contains a repository URL, only the owner username is used. If no valid GitHub URL is provided, its Markdown action is disabled.
 
 ## Hosting
 

@@ -27,8 +27,8 @@ test('normalizes all supported statistics', () => {
   assert.equal(mod.values.published, '2026-04-13');
   assert.equal(normalized.kinds.users, 'Windhawk users');
   assert.equal(normalized.kinds.github, 'GitHub');
-  assert.equal(mod.values.github, 'luizbizzio/taskbar-zones');
-  assert.equal(mod.githubUrl, 'https://github.com/luizbizzio/taskbar-zones');
+  assert.equal(mod.values.github, 'luizbizzio');
+  assert.equal(mod.githubUrl, 'https://github.com/luizbizzio');
   assert.equal(normalized.mods.find(x => x.id === 'malicious').githubUrl, null);
   assert.equal(Object.keys(normalized.palette).length, 10);
   assert.equal(normalized.palette.indigo, undefined);
@@ -46,7 +46,8 @@ test('validates custom HEX colors and badge paths', () => {
   assert.deepEqual(parseBadgePath('/badges/taskbar-zones/users.svg'), { id:'taskbar-zones', kind:'users', preset:'blue' });
   assert.deepEqual(parseBadgePath('/badges/taskbar-zones/github.svg'), { id:'taskbar-zones', kind:'github', preset:'blue' });
   assert.equal(githubLink('https://github.com/luizbizzio').label, 'luizbizzio');
-  assert.equal(githubLink('https://www.github.com/luizbizzio/taskbar-zones/').url, 'https://github.com/luizbizzio/taskbar-zones');
+  assert.equal(githubLink('https://www.github.com/luizbizzio/taskbar-zones/').url, 'https://github.com/luizbizzio');
+  assert.equal(githubLink('https://github.com/luizbizzio/taskbar-zones').label, 'luizbizzio');
   assert.equal(githubLink('https://github.com.evil.test/luizbizzio'), null);
   assert.equal(githubLink('javascript:alert(1)'), null);
   assert.equal(githubLink('https://github.com@evil.test/luizbizzio'), null);
@@ -144,7 +145,13 @@ test('handles appearance, short labels, and mod badge in dynamic URLs', async ()
     assert.equal(gitHub.status, 200);
     const gitHubSvg = await gitHub.text();
     assert.match(gitHubSvg, />GitHub<\/text>/);
-    assert.match(gitHubSvg, /luizbizzio\/taskbar-zones/);
+    assert.match(gitHubSvg, />luizbizzio<\/text>/);
+    assert.doesNotMatch(gitHubSvg, /luizbizzio\/taskbar-zones|undefined/);
+    const missingGithub = await worker.fetch(new Request('https://example.workers.dev/badges/malicious/github.svg'), {}, context);
+    assert.equal(missingGithub.status, 200);
+    const missingGithubSvg = await missingGithub.text();
+    assert.match(missingGithubSvg, /not specified/);
+    assert.doesNotMatch(missingGithubSvg, /undefined/);
     const wrongKind = await worker.fetch(new Request('https://example.workers.dev/badges/taskbar-zones/unknown.svg'), {}, context);
     assert.equal(wrongKind.status, 404);
     for (const bad of ['style=invalid', 'size=huge', 'labelMode=bad']) {

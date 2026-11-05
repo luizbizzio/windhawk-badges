@@ -110,7 +110,8 @@ def github_info(raw: object) -> tuple[str, str] | None:
     path = parsed.path.rstrip("/")
     if not GITHUB_PATH_RE.fullmatch(path):
         return None
-    return f"https://github.com{path}", path[1:]
+    username = path.split("/")[1]
+    return f"https://github.com/{username}", username
 
 
 def normalize_mods(catalog: dict) -> list[dict]:

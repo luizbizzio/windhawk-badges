@@ -41,13 +41,14 @@ function badgeUrl(modId, kind, color) {
   if (chosenStyle !== 'classic') url.searchParams.set('style', chosenStyle);
   if (chosenSize !== 'normal') url.searchParams.set('size', chosenSize);
   if (chosenLabelMode !== 'full' && kind !== 'mod') url.searchParams.set('labelMode', chosenLabelMode);
+  if (kind === 'github') url.searchParams.set('v', '2');
   return url.href;
 }
 function markdownFor(kind) {
   const link = badgeUrl(chosenMod.id, kind, chosenColor);
   const alt = kind === 'mod' ? chosenMod.name : kinds[kind];
   const destination = kind === 'github' ? chosenMod.githubUrl : chosenMod.url;
-  return link && destination ? `[![${alt.replaceAll('[', '\[').replaceAll(']', '\]')}](${link})](${chosenMod.url})` : '';
+  return link && destination ? `[![${alt.replaceAll('[', '\[').replaceAll(']', '\]')}](${link})](${destination})` : '';
 }
 
 function closeResults() {
@@ -176,7 +177,7 @@ function renderBadges() {
     const preview = document.createElement('img');
     preview.className = 'badge-image';
     const url = badgeUrl(chosenMod.id, kind, chosenColor);
-    preview.alt = kind === 'mod' ? chosenMod.name : `${label}: ${chosenMod.values[kind] ?? 'unknown'}`;
+    preview.alt = kind === 'mod' ? chosenMod.name : `${label}: ${chosenMod.values?.[kind] ?? 'not specified'}`;
     preview.loading = 'lazy';
     if (url) preview.src = url;
     const actions = document.createElement('div');

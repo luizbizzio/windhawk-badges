@@ -67,7 +67,8 @@ export function githubLink(raw) {
       link.username || link.password || link.port) return null;
   const path = link.pathname.replace(/\/+$/, '');
   if (!/^\/[a-zA-Z0-9_.-]+(?:\/[a-zA-Z0-9_.-]+)*$/.test(path)) return null;
-  return { url: 'https://github.com' + path, label: path.slice(1) };
+  const username = path.split('/')[1];
+  return { url: `https://github.com/${username}`, label: username };
 }
 
 export function normalizeCatalog(source, generatedAt = new Date().toISOString()) {
@@ -184,7 +185,7 @@ async function loadCatalog(request, context) {
   // A cache entry holds normalized data, not thousands of pre-rendered SVGs.
   // The cache is regional; on a cold request the Windhawk JSON is fetched once.
   const cache = globalThis.caches?.default;
-  const cacheKey = new Request(new URL('/__windhawk_internal/catalog-v1', request.url));
+  const cacheKey = new Request(new URL('/__windhawk_internal/catalog-v2', request.url));
   if (cache) {
     const saved = await cache.match(cacheKey);
     if (saved) return saved.json();
@@ -242,7 +243,8 @@ export default {
       const mod = catalog.mods.find(item => item.id === info.id);
       if (!mod) return errorResponse(404, 'Mod not found in public Windhawk catalog');
       const label = labelMode === 'short' ? (SHORT_LABELS[info.kind] || BADGE_LABELS[info.kind]) : BADGE_LABELS[info.kind];
-      const svg = renderBadge(label, info.kind === 'mod' ? mod.name : mod.values[info.kind], color, labelColor, { style, size, single: info.kind === 'mod' });
+      const value = info.kind === 'mod' ? mod.name : (mod.values?.[info.kind] ?? 'not specified');
+      const svg = renderBadge(label, value, color, labelColor, { style, size, single: info.kind === 'mod' });
       return new Response(request.method === 'HEAD' ? null : svg, {
         headers: {
           'Content-Type': 'image/svg+xml; charset=utf-8',
