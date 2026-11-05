@@ -13,7 +13,14 @@ const BADGE_LABELS = Object.freeze({
   published: 'Published',
   license: 'License',
   architecture: 'Architecture',
+  mod: 'Mod name',
 });
+const SHORT_LABELS = Object.freeze({
+  users: 'Users', rating: 'Rating', votes: 'Votes',
+});
+const STYLES = new Set(['classic', 'flat', 'flat-square', 'rounded', 'pill']);
+const SIZES = new Set(['normal', 'compact']);
+const LABEL_MODES = new Set(['full', 'short']);
 const PALETTE = Object.freeze({
   blue: '#2563eb', green: '#238636', orange: '#b45309', red: '#c62828',
   purple: '#7c3aed', gray: '#626b77', cyan: '#0e7490', teal: '#0f766e',
@@ -62,6 +69,7 @@ export function normalizeCatalog(source, generatedAt = new Date().toISOString())
       name: text(metadata.name, id, 140),
       url: `https://windhawk.net/mods/${id}`,
       values: {
+        mod: text(metadata.name, id, 140),
         users: formatNumber(count(details.users)),
         rating: rating === null ? 'not rated' : `${rating.toFixed(1)}/5`,
         votes: formatNumber(votes),
@@ -104,24 +112,50 @@ function xmlEscape(value) {
   return String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;').replace(/'/g, '&apos;');
 }
-function approximateWidth(value) {
-  return Math.round([...value].reduce((sum, c) => sum + (/[MW@%]/.test(c) ? 8 : /[ilI .,:!|]/.test(c) ? 4 : /[0-9]/.test(c) ? 6.3 : 6.7), 0));
+function approximateWidth(value, scale = 1) {
+  return Math.round([...value].reduce((sum, c) => sum + (/[MW@%]/.test(c) ? 8 : /[ilI .,:!|]/.test(c) ? 4 : /[0-9]/.test(c) ? 6.3 : 6.7), 0) * scale);
 }
-export function renderBadge(label, rawValue, color = PALETTE.blue, labelColor = DEFAULT_LABEL_COLOR) {
-  const titleText = String(label).slice(0, 60);
-  const valueText = String(rawValue).slice(0, 52);
+
+/** Render the original two-part badge by default; mod badges use a single segment. */
+export function renderBadge(label, rawValue, color = PALETTE.blue, labelColor = DEFAULT_LABEL_COLOR, options = {}) {
+  const style = options.style ?? 'classic';
+  const size = options.size ?? 'normal';
+  const single = options.single === true;
+  if (!STYLES.has(style) || !SIZES.has(size)) throw new Error('Invalid appearance');
   if (!hexColor(color) || !hexColor(labelColor)) throw new Error('Invalid badge color');
-  const left = Math.max(45, approximateWidth(titleText) + 22);
-  const right = Math.max(38, approximateWidth(valueText) + 22);
+
+  const compact = size === 'compact';
+  const height = compact ? 18 : 22;
+  const fontSize = compact ? 10 : 11;
+  const baseline = compact ? 13 : 15;
+  const horizontalPadding = compact ? 7 : 11;
+  const scale = fontSize / 11;
+  const titleText = String(label).slice(0, 60);
+  const maxLength = single ? 72 : 52;
+  const rawText = String(rawValue);
+  const valueText = [...rawText].length > maxLength ? [...rawText].slice(0, maxLength - 1).join('') + '…' : rawText;
+  const left = single ? 0 : Math.max(compact ? 32 : 45, approximateWidth(titleText, scale) + 2 * horizontalPadding);
+  const right = Math.max(compact ? 26 : 38, approximateWidth(valueText, scale) + 2 * horizontalPadding);
   const width = left + right;
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="22" viewBox="0 0 ${width} 22" role="img" aria-label="${xmlEscape(titleText + ': ' + valueText)}">\n` +
-    `  <title>${xmlEscape(titleText)}: ${xmlEscape(valueText)}</title>\n` +
-    `  <rect width="${width}" height="22" rx="3" fill="${labelColor}"/>\n` +
-    `  <path d="M${left} 0h${right}v22h-${right}z" fill="${color}"/>\n` +
-    '  <g fill="#ffffff" font-family="Verdana,DejaVu Sans,sans-serif" font-size="11" text-anchor="middle">\n' +
-    `    <text x="${left / 2}" y="15">${xmlEscape(titleText)}</text>\n` +
-    `    <text x="${left + right / 2}" y="15">${xmlEscape(valueText)}</text>\n` +
-    '  </g>\n</svg>\n';
+  const radius = style === 'flat-square' ? 0 : style === 'pill' ? height / 2 : style === 'rounded' ? 7 : style === 'flat' ? 2 : 3;
+  const aria = single ? valueText : `${titleText}: ${valueText}`;
+  const title = xmlEscape(aria);
+  const parts = [
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-label="${title}">`,
+    `  <title>${title}</title>`,
+    `  <defs><clipPath id="badge-clip"><rect width="${width}" height="${height}" rx="${radius}"/></clipPath></defs>`,
+    '  <g clip-path="url(#badge-clip)">',
+    `    <rect width="${width}" height="${height}" fill="${single ? color : labelColor}"/>`,
+  ];
+  if (!single) parts.push(`    <path d="M${left} 0h${right}v${height}h-${right}z" fill="${color}"/>`);
+  // Classic retains the familiar subtle darker bottom edge; flat stays fully solid.
+  if (style === 'classic') parts.push(`    <path d="M0 ${height - 2}h${width}v2H0z" fill="#000000" fill-opacity="0.09"/>`);
+  parts.push('  </g>');
+  parts.push(`  <g fill="#ffffff" font-family="Verdana,DejaVu Sans,sans-serif" font-size="${fontSize}" text-anchor="middle">`);
+  if (!single) parts.push(`    <text x="${left / 2}" y="${baseline}">${xmlEscape(titleText)}</text>`);
+  parts.push(`    <text x="${left + right / 2}" y="${baseline}">${xmlEscape(valueText)}</text>`);
+  parts.push('  </g>', '</svg>', '');
+  return parts.join('\n');
 }
 
 async function loadCatalog(request, context) {
@@ -163,6 +197,12 @@ export default {
     if (url.pathname !== '/api/catalog' && !info) return errorResponse(404, 'Unknown badge type or mod ID');
     const colorInput = url.searchParams.get('color');
     const labelInput = url.searchParams.get('labelColor');
+    const style = url.searchParams.get('style') ?? 'classic';
+    const size = url.searchParams.get('size') ?? 'normal';
+    const labelMode = url.searchParams.get('labelMode') ?? 'full';
+    if (info && (!STYLES.has(style) || !SIZES.has(size) || !LABEL_MODES.has(labelMode))) {
+      return errorResponse(400, 'Invalid appearance option.');
+    }
     const color = info ? resolveColor(colorInput ?? info.preset) : null;
     const labelColor = info ? resolveColor(labelInput ?? DEFAULT_LABEL_COLOR) : null;
     if (info && (!color || !labelColor)) return errorResponse(400, 'Invalid color. Use a named preset or six-digit HEX.');
@@ -179,7 +219,8 @@ export default {
       }
       const mod = catalog.mods.find(item => item.id === info.id);
       if (!mod) return errorResponse(404, 'Mod not found in public Windhawk catalog');
-      const svg = renderBadge(BADGE_LABELS[info.kind], mod.values[info.kind], color, labelColor);
+      const label = labelMode === 'short' ? (SHORT_LABELS[info.kind] || BADGE_LABELS[info.kind]) : BADGE_LABELS[info.kind];
+      const svg = renderBadge(label, info.kind === 'mod' ? mod.name : mod.values[info.kind], color, labelColor, { style, size, single: info.kind === 'mod' });
       return new Response(request.method === 'HEAD' ? null : svg, {
         headers: {
           'Content-Type': 'image/svg+xml; charset=utf-8',

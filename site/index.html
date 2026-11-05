@@ -21,7 +21,7 @@
   <main class="main">
     <div class="page-heading">
       <h1>Windhawk Badges</h1>
-      <p>Badges for any Windhawk mod. Choose any HEX color and copy the Markdown into your README.</p>
+      <p>Badges for any Windhawk mod. Customize the appearance, then copy the Markdown into your README.</p>
     </div>
     <section class="panel configurator" aria-labelledby="configure-title">
       <h2 id="configure-title">Customize</h2>
@@ -50,6 +50,35 @@
           </div>
         </div>
         <p class="field-note">Custom HEX and preset colors stay updated automatically. No downloads or setup needed.</p>
+      </div>
+      <div class="field appearance-field">
+        <div class="appearance-heading"><span class="field-label">Appearance</span><span class="appearance-hint">Changes apply to every badge</span></div>
+        <div class="appearance-controls">
+          <div>
+            <label for="badgeStyle">Style</label>
+            <select id="badgeStyle">
+              <option value="classic">Classic</option>
+              <option value="flat">Flat</option>
+              <option value="flat-square">Flat square</option>
+              <option value="rounded">Rounded</option>
+              <option value="pill">Pill</option>
+            </select>
+          </div>
+          <div>
+            <label for="badgeSize">Size</label>
+            <select id="badgeSize">
+              <option value="normal">Normal</option>
+              <option value="compact">Compact</option>
+            </select>
+          </div>
+          <div>
+            <label for="badgeLabels">Labels</label>
+            <select id="badgeLabels">
+              <option value="full">Full (Windhawk users)</option>
+              <option value="short">Short (Users)</option>
+            </select>
+          </div>
+        </div>
       </div>
     </section>
     <section class="panel output" aria-labelledby="output-title">

@@ -9,10 +9,11 @@ const copyAll = document.getElementById('copyAll');
 const status = document.getElementById('status');
 const selectedMod = document.getElementById('selectedMod');
 const baseUrl = new URL('./', window.location.href);
-// Set in config.js after the Cloudflare Worker is deployed.
-// Until then, preset badges use the existing GitHub Pages SVGs.
 const workerSetting = (window.WINDHAWK_BADGES_WORKER_URL || '').trim().replace(/\/+$/, '');
 const workerBase = /^https:\/\/[^/]+$/i.test(workerSetting) ? workerSetting : null;
+const styleSelect = document.getElementById('badgeStyle');
+const sizeSelect = document.getElementById('badgeSize');
+const labelsSelect = document.getElementById('badgeLabels');
 const valueHex = document.getElementById('valueHex');
 const valuePicker = document.getElementById('valuePicker');
 const labelHex = document.getElementById('labelHex');
@@ -23,21 +24,31 @@ let palette = {};
 let chosenMod = null;
 let chosenColor = 'blue';
 let chosenLabelColor = '#555555';
+let chosenStyle = 'classic';
+let chosenSize = 'normal';
+let chosenLabelMode = 'full';
 
 function badgeUrl(modId, kind, color) {
   const path = palette[color]
     ? `badges/${encodeURIComponent(modId)}/${encodeURIComponent(kind)}/${encodeURIComponent(color)}.svg`
     : `badges/${encodeURIComponent(modId)}/${encodeURIComponent(kind)}.svg`;
-  if (!workerBase && (!palette[color] || chosenLabelColor !== '#555555')) return null;
+  // Pages has legacy static badges, but all custom appearance features need the Worker.
+  if (!workerBase && (kind === 'mod' || !palette[color] || chosenLabelColor !== '#555555' ||
+      chosenStyle !== 'classic' || chosenSize !== 'normal' || chosenLabelMode !== 'full')) return null;
   const url = new URL(path, workerBase ? workerBase + '/' : baseUrl);
   if (!palette[color]) url.searchParams.set('color', color.replace('#', ''));
-  if (chosenLabelColor !== '#555555') url.searchParams.set('labelColor', chosenLabelColor.slice(1));
+  if (chosenLabelColor !== '#555555' && kind !== 'mod') url.searchParams.set('labelColor', chosenLabelColor.slice(1));
+  if (chosenStyle !== 'classic') url.searchParams.set('style', chosenStyle);
+  if (chosenSize !== 'normal') url.searchParams.set('size', chosenSize);
+  if (chosenLabelMode !== 'full' && kind !== 'mod') url.searchParams.set('labelMode', chosenLabelMode);
   return url.href;
 }
 function markdownFor(kind) {
   const link = badgeUrl(chosenMod.id, kind, chosenColor);
-  return link ? `[![${kinds[kind]}](${link})](${chosenMod.url})` : '';
+  const alt = kind === 'mod' ? chosenMod.name : kinds[kind];
+  return link ? `[![${alt.replaceAll('[', '\[').replaceAll(']', '\]')}](${link})](${chosenMod.url})` : '';
 }
+
 function closeResults() {
   results.hidden = true;
   search.setAttribute('aria-expanded', 'false');
@@ -129,6 +140,14 @@ valueHex.addEventListener('change', () => {
   else valueHex.value = palette[chosenColor] || chosenColor;
 });
 labelPicker.addEventListener('input', () => applyLabelHex(labelPicker.value));
+for (const [element, key] of [[styleSelect, 'style'], [sizeSelect, 'size'], [labelsSelect, 'labels']]) {
+  element.addEventListener('change', () => {
+    if (key === 'style') chosenStyle = styleSelect.value;
+    else if (key === 'size') chosenSize = sizeSelect.value;
+    else chosenLabelMode = labelsSelect.value;
+    renderBadges();
+  });
+}
 labelHex.addEventListener('change', () => {
   if (validHex(labelHex.value)) applyLabelHex(labelHex.value);
   else labelHex.value = chosenLabelColor;
@@ -144,6 +163,7 @@ function button(label, action, isPrimary = false) {
 function renderBadges() {
   badgeGrid.replaceChildren();
   if (!chosenMod) return;
+  let availableCount = 0;
   for (const [kind, label] of Object.entries(kinds)) {
     const card = document.createElement('article');
     card.className = 'badge-card';
@@ -155,7 +175,7 @@ function renderBadges() {
     const preview = document.createElement('img');
     preview.className = 'badge-image';
     const url = badgeUrl(chosenMod.id, kind, chosenColor);
-    preview.alt = `${label}: ${chosenMod.values[kind] ?? 'unknown'}`;
+    preview.alt = kind === 'mod' ? chosenMod.name : `${label}: ${chosenMod.values[kind] ?? 'unknown'}`;
     preview.loading = 'lazy';
     if (url) preview.src = url;
     const actions = document.createElement('div');
@@ -166,19 +186,21 @@ function renderBadges() {
     urlButton.disabled = !url;
     actions.append(md, urlButton);
     if (url) {
+      availableCount++;
       row.append(preview, actions);
     } else {
       const help = document.createElement('span');
       help.className = 'custom-unavailable';
-      help.textContent = 'Custom HEX needs the Cloudflare Worker URL.';
+      help.textContent = 'Requires a configured Worker URL.';
       row.append(help, actions);
     }
     card.append(heading, row);
     badgeGrid.append(card);
   }
-  copyAll.disabled = !badgeUrl(chosenMod.id, Object.keys(kinds)[0], chosenColor);
-  status.textContent = copyAll.disabled ? 'Custom HEX badges will work after the Worker URL is configured.' : '';
+  copyAll.disabled = availableCount === 0;
+  status.textContent = availableCount === 0 ? 'This appearance needs the Cloudflare Worker.' : '';
 }
+
 async function copyText(value, element) {
   try {
     await navigator.clipboard.writeText(value);
@@ -212,7 +234,7 @@ async function start() {
     const catalog = await response.json();
     if (!Array.isArray(catalog.mods) || !catalog.mods.length) throw new Error('No mods found');
     mods = catalog.mods;
-    kinds = catalog.kinds;
+    kinds = { ...catalog.kinds, mod: 'Mod name' }; 
     palette = catalog.palette;
     chosenColor = catalog.defaultColor || 'blue';
     if (!palette[chosenColor] || Object.keys(palette).length !== 12) throw new Error('Invalid palette');

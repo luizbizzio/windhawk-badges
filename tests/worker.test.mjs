@@ -72,3 +72,74 @@ test('serves same origin API and dynamic badge URLs', async () => {
     globalThis.caches = savedCache;
   }
 });
+
+test('supports five separate visual styles and compact density', () => {
+  const variants = [
+    ['classic', 'rx="3"'],
+    ['flat', 'rx="2"'],
+    ['flat-square', 'rx="0"'],
+    ['rounded', 'rx="7"'],
+    ['pill', 'rx="11"'],
+  ];
+  const appearances = new Set();
+  for (const [style, expectedRadius] of variants) {
+    const svg = renderBadge('Users', '150', '#ff5733', '#24292f', { style, size: 'normal' });
+    assert.match(svg, new RegExp(expectedRadius));
+    assert.match(svg, /width="\d+" height="22"/);
+    assert.match(svg, /<text[^>]+>Users<\/text>/);
+    appearances.add(svg);
+  }
+  assert.equal(appearances.size, 5);
+  const compact = renderBadge('Users', '150', '#ff5733', '#24292f', { style: 'pill', size: 'compact' });
+  assert.match(compact, /height="18"/);
+  assert.match(compact, /font-size="10"/);
+  assert.match(compact, /rx="9"/);
+  assert.throws(() => renderBadge('Users', '10', '#ff5733', '#24292f', { style: 'nope' }));
+});
+
+test('mod name is a single-part SVG with escaped text', () => {
+  const svg = renderBadge('Mod name', 'Archive & Preview <Beta>', '#ff5733', '#555555', { single: true, style: 'pill' });
+  assert.match(svg, /Archive &amp; Preview &lt;Beta&gt;/);
+  assert.doesNotMatch(svg, /<text[^>]*>Mod name<\/text>/);
+  assert.doesNotMatch(svg, /M0 0h/);
+  assert.match(svg, /fill="#ff5733"/);
+});
+
+test('handles appearance, short labels, and mod badge in dynamic URLs', async () => {
+  const savedFetch = globalThis.fetch;
+  const savedCache = globalThis.caches;
+  globalThis.fetch = async () => new Response(JSON.stringify(catalog), { status: 200 });
+  globalThis.caches = { default: { match: async () => null, put: async () => {} } };
+  const context = { waitUntil: promise => promise.catch(() => {}) };
+  try {
+    const url = 'https://example.workers.dev/badges/taskbar-zones/users.svg?style=pill&size=compact&labelMode=short&color=ff5733';
+    const response = await worker.fetch(new Request(url), {}, context);
+    assert.equal(response.status, 200);
+    const svg = await response.text();
+    assert.match(svg, />Users<\/text>/);
+    assert.doesNotMatch(svg, /Windhawk users/);
+    assert.match(svg, /height="18"/);
+    assert.match(svg, /rx="9"/);
+    const mod = await worker.fetch(new Request('https://example.workers.dev/badges/taskbar-zones/mod.svg?style=rounded'), {}, context);
+    assert.equal(mod.status, 200);
+    const modSVG = await mod.text();
+    assert.match(modSVG, />Taskbar Zones<\/text>/);
+    assert.doesNotMatch(modSVG, /Mod name<\/text>/);
+    const wrongKind = await worker.fetch(new Request('https://example.workers.dev/badges/taskbar-zones/unknown.svg'), {}, context);
+    assert.equal(wrongKind.status, 404);
+    for (const bad of ['style=invalid', 'size=huge', 'labelMode=bad']) {
+      const error = await worker.fetch(new Request(`https://example.workers.dev/badges/taskbar-zones/users.svg?${bad}`), {}, context);
+      assert.equal(error.status, 400);
+    }
+    const head = await worker.fetch(new Request('https://example.workers.dev/badges/taskbar-zones/mod.svg', { method: 'HEAD' }), {}, context);
+    assert.equal(head.status, 200);
+    assert.equal(await head.text(), '');
+    const api = await worker.fetch(new Request('https://example.workers.dev/api/catalog'), {}, context);
+    const normalized = await api.json();
+    assert.equal(normalized.kinds.mod, 'Mod name');
+    assert.equal(normalized.mods.find(x => x.id === 'taskbar-zones').values.mod, 'Taskbar Zones');
+  } finally {
+    globalThis.fetch = savedFetch;
+    globalThis.caches = savedCache;
+  }
+});
