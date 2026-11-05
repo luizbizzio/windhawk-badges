@@ -1,6 +1,6 @@
 {
   "name": "windhawk-badges",
-  "version": "1.3.0",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "description": "Dynamic SVG badge API for a GitHub Pages frontend",
