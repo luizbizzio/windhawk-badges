@@ -1,126 +1,151 @@
+<div align="center">
+
 # Windhawk Badges
 
-Create custom SVG badges for mods in the public [Windhawk catalog](https://mods.windhawk.net/catalogs/en.json). Choose a mod, change the colors and style, and copy the Markdown into your GitHub README.
+**Custom badges for your Windhawk mods.**
 
-**[Open the badge generator](https://luizbizzio.github.io/windhawk-badges/)**
+Create live SVG badges, choose your colors and style, and copy ready-to-use Markdown for your GitHub README.
+
+**[Open the Badge Generator](https://luizbizzio.github.io/windhawk-badges/)**
+
+[![GitHub Pages](https://github.com/luizbizzio/windhawk-badges/actions/workflows/deploy.yml/badge.svg)](https://github.com/luizbizzio/windhawk-badges/actions/workflows/deploy.yml)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 
 [![Windhawk users](https://windhawk-badges.luizbizzio.workers.dev/badges/taskbar-zones/users.svg?icon=windhawk&labelMode=short)](https://windhawk.net/mods/taskbar-zones)
+[![Windhawk rating](https://windhawk-badges.luizbizzio.workers.dev/badges/taskbar-zones/rating.svg?icon=windhawk&labelMode=short)](https://windhawk.net/mods/taskbar-zones)
+[![Mod version](https://windhawk-badges.luizbizzio.workers.dev/badges/taskbar-zones/version.svg?icon=windhawk)](https://windhawk.net/mods/taskbar-zones)
 
-Windhawk Badges is an independent community project. It is not affiliated with Windhawk.
+</div>
 
-## Quick start
+Windhawk Badges is a free, independent community tool. It is **not affiliated with or endorsed by Windhawk**.
 
-1. Open the [Windhawk Badges website](https://luizbizzio.github.io/windhawk-badges/).
-2. Search for a Windhawk mod and select it.
-3. Choose a badge style, size, colors, labels, and icon.
-4. Click **Markdown** on a badge or **Copy all Markdown**.
-5. Paste the result into your README.
+## Get started
 
-The editor shows the Windhawk icon by default. You can set **Icon** to **None** at any time.
+1. Open the **[website](https://luizbizzio.github.io/windhawk-badges/)**.
+2. Find your mod by name or ID.
+3. Choose the style, colors, labels and icon.
+4. Select **Markdown** or **URL** for a badge, or choose **Copy all Markdown**.
+5. Paste the Markdown into your repository's README.
 
-## Available badges
+Your previews are made **in your browser**. Searching mods or changing the settings does not send badge requests to Cloudflare.
 
-| Badge | Information |
+## Features
+
+- **12 badge types** with live information from the official Windhawk catalog.
+- **5 styles:** Classic, Flat, Flat square, Rounded and Pill.
+- **2 sizes:** Normal and Compact.
+- **2 label modes:** Full and Short.
+- **10 preset colors** and custom HEX colors for each part of a badge.
+- **Optional Windhawk icon** with its own background and icon color.
+- **Ready-to-copy Markdown** with links to the mod page or GitHub profile.
+- **Legacy URL support** for older badges and color presets.
+
+### Badge types
+
+| Badge | Shows |
 | --- | --- |
-| Windhawk users | User count reported in the Windhawk catalog |
-| Windhawk rating | Average rating, such as `4.8/5.0` |
-| Rating votes | Number of rating votes |
+| Users | Windhawk user count |
+| Rating | Average rating, for example `4.8/5.0` |
+| Votes | Number of rating votes |
 | Reviews | Number of reviews |
-| Version | Latest version in the catalog |
-| Author | Mod author |
+| Version | Mod version |
+| Author | Author's name |
 | Updated | Last update date |
-| Published | Publication date |
+| Published | First publication date |
 | License | Mod license |
 | Architecture | Supported architecture |
-| Mod name | Name-only badge, linked to the mod page |
-| GitHub | GitHub username, linked to the author's profile |
+| Mod name | Mod name without a separate label |
+| GitHub | GitHub account name |
 
-The available values come from the Windhawk catalog. User counts are not presented as download totals. A missing value may appear as `unknown` or `not specified`.
+The numbers come from the **[Windhawk catalog](https://mods.windhawk.net/catalogs/en.json)**. User counts are not download totals. Some mods have missing information, which is shown as `unknown`, `not specified` or `not rated`.
 
-## Appearance
+## Customize a badge
 
-The website provides five styles: **Classic**, **Flat**, **Flat square**, **Rounded**, and **Pill**. You can use **Normal** or **Compact** size and **Full** or **Short** labels.
+Choose a preset or enter a six-digit HEX value. All color controls are available in the editor.
 
-You can also choose one of ten preset colors or enter six-digit HEX colors for each part of the badge. The color controls use the full width of the editor for a compact layout.
-
-| Option | What it changes | URL parameter |
+| Setting | URL parameter | Default |
 | --- | --- | --- |
-| Value background | Background of the value | `color` |
-| Label background | Background of the label | `labelColor` |
-| Icon background | Background behind the Windhawk logo (default `#000000`) | `iconBgColor` |
-| Icon color | Color of the Windhawk logo (default `#ffffff`) | `iconColor` |
-| Label text | Text color of the label | `labelTextColor` |
-| Value text | Text color of the value or mod name | `valueTextColor` |
-| Icon | Show or hide the Windhawk logo | `icon=windhawk` or `icon=none` |
-| Style | Badge shape | `style` |
-| Size | Badge height | `size` |
-| Labels | Full or short text | `labelMode` |
+| Value background | `color` | `2563eb` |
+| Label background | `labelColor` | `555555` |
+| Icon background | `iconBgColor` | `000000` |
+| Icon color | `iconColor` | `ffffff` |
+| Label text | `labelTextColor` | `ffffff` |
+| Value text | `valueTextColor` | `ffffff` |
+| Style | `style` | `classic` |
+| Size | `size` | `normal` |
+| Labels | `labelMode` | `full` |
+| Icon | `icon` | `none` for direct links |
 
-Use HEX colors with six digits in URLs, for example `ff5733` or `#ff5733` (URL-encoded when needed). The website prepares the correct links for you.
+The website **selects the Windhawk icon by default**. The Worker keeps `icon=none` as the default for older URLs, so existing badges do not change.
 
-**Compatibility:** the website starts with the Windhawk icon enabled, but old badge URLs still have no icon unless `icon=windhawk` is present. Existing Markdown links continue to work.
+### Direct URL examples
 
-## Direct badge URLs
-
-The URL format is:
+**Standard badge**
 
 ```text
-https://windhawk-badges.luizbizzio.workers.dev/badges/<mod-id>/<badge>.svg
+https://windhawk-badges.luizbizzio.workers.dev/badges/taskbar-zones/users.svg
 ```
 
-For example, a compact rating badge with a Windhawk icon and custom colors:
+**Custom icon, colors and compact style**
 
 ```text
-https://windhawk-badges.luizbizzio.workers.dev/badges/taskbar-zones/rating.svg?style=pill&size=compact&icon=windhawk&iconBgColor=000000&iconColor=ffffff&labelColor=555555&color=2563eb&labelTextColor=ffffff&valueTextColor=ffffff
+https://windhawk-badges.luizbizzio.workers.dev/badges/taskbar-zones/rating.svg?icon=windhawk&iconBgColor=000000&iconColor=ffffff&color=2563eb&labelColor=555555&style=pill&size=compact&labelMode=short
 ```
 
-A name-only badge:
+**Mod name only**
 
 ```text
 https://windhawk-badges.luizbizzio.workers.dev/badges/taskbar-zones/mod.svg?icon=windhawk
 ```
 
-You can also use named colors in the URL, such as `/users/blue.svg`. Previously supported URLs, including the older `teal` and `indigo` colors, remain available.
+Replace `taskbar-zones` with any valid Windhawk mod ID. You can also use named-color URLs such as `/badges/taskbar-zones/users/green.svg`.
 
 ## How it works
 
-- **GitHub Pages** hosts the website and search data. Its catalog is updated daily.
-- **Local previews** render in your browser. Searching mods or changing badge settings does not make Cloudflare Worker requests.
-- **Cloudflare Workers** serves the SVG links used in READMEs. The Worker caches the public catalog for up to six hours and returns cacheable SVG responses for one hour.
-- **GitHub image caching** may keep README badge images longer. A badge shown in the editor can also briefly differ from the live Worker badge because their catalog refresh schedules are different.
+| Part | Purpose |
+| --- | --- |
+| GitHub Pages | Hosts the editor and its search catalog |
+| Local SVG renderer | Builds previews in your browser without Worker requests |
+| Cloudflare Worker | Serves live badge SVG URLs used in READMEs |
+| GitHub Actions | Runs tests and publishes the website |
+| Dependabot | Checks dependencies and GitHub Actions for updates |
 
-The Windhawk logo vector is embedded in the generated SVG. No external image request is needed to show the icon.
+The website catalog updates daily. The Worker caches the upstream catalog for up to six hours, and its SVG responses are cacheable for one hour. GitHub may cache README images for longer. This means a preview and an embedded badge can briefly show different values.
+
+Existing static badge links are kept for compatibility.
 
 ## Development
 
-Requirements: Node.js 22 or later, Python 3.12 or later, and a Cloudflare account to deploy your own Worker.
+You need **Node.js 22+** and **Python 3.12+** to run the tests. Deploying a Worker also requires a Cloudflare account.
 
 ```bash
 npm install
 npm test
-python -m unittest discover -s tests -v
+python -m unittest discover -s tests -p 'test_generate.py' -v
 ```
 
-To test the Worker locally:
+Run the Worker locally:
 
 ```bash
 npm run dev
 ```
 
-To deploy your own Worker:
+Deploy it to your Cloudflare account:
 
 ```bash
 npm run deploy
 ```
 
-GitHub Actions tests the code, builds the static catalog and legacy badge URLs, and publishes the website.
+The GitHub Actions workflow runs the tests and publishes GitHub Pages. Pull requests run the tests without publishing the site.
 
 ## Security
 
-Please report security issues privately. See [SECURITY.md](SECURITY.md). Do not publish vulnerability details in a public GitHub issue.
+Please read [SECURITY.md](SECURITY.md) before reporting a security issue. Do not publish vulnerability details in public issues.
 
-## License and credits
+## License and attribution
 
-Copyright 2026 [Luiz Bizzio](https://github.com/luizbizzio). This project uses the [Apache License 2.0](LICENSE).
+Copyright © 2026 [Luiz Bizzio](https://github.com/luizbizzio). The project's original code is published under the **[Apache License 2.0](LICENSE)**.
 
-Badge data comes from the [public Windhawk catalog](https://mods.windhawk.net/catalogs/en.json). The optional icon uses the [official Windhawk logo vector](https://github.com/ramensoftware/windhawk/blob/main/src/windhawk-frontend/apps/windhawk-frontend/src/app/panel/assets/logo-white.svg). Windhawk and its logo belong to their respective owners. This project is independent and is not endorsed by Windhawk.
+The optional Windhawk icon is based on the [official Windhawk SVG](https://github.com/ramensoftware/windhawk/blob/main/src/windhawk-frontend/apps/windhawk-frontend/src/app/panel/assets/logo-white.svg), from a repository licensed under **GPL-3.0**. The Windhawk logo and name remain the property of their respective owner. The project's Apache license does not itself grant trademark rights or independent permission to relicense the Windhawk logo.
+
+Windhawk Badges is an unofficial project and is not sponsored, maintained or endorsed by Windhawk.
