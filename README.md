@@ -8,7 +8,7 @@ An independent community project, not affiliated with Windhawk.
 
 ## Features
 
-- 11 badges, including a single-color mod name badge that links to the mod page.
+- 12 badges, including a mod name badge linked to Windhawk and a GitHub badge linked to the address provided in the official catalog.
 - 5 styles: Classic, Flat, Flat square, Rounded and Pill.
 - Normal and compact sizes, full and short labels.
 - 10 preset colors and custom six-digit HEX colors for the value and label.
@@ -29,7 +29,7 @@ A badge showing only the mod's name:
 https://windhawk-badges.luizbizzio.workers.dev/badges/taskbar-zones/mod.svg
 ```
 
-The generated Markdown points to `https://windhawk.net/mods/<mod-id>`.
+The Mod name badge links to `https://windhawk.net/mods/<mod-id>`. The GitHub badge links to the `metadata.github` URL in the official catalog, which can be an author profile rather than a repository. If the catalog has no valid GitHub URL, the GitHub Markdown action is disabled.
 
 ## Hosting
 

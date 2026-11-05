@@ -2,28 +2,74 @@
   "mods": {
     "recycle-bin-file-preview": {
       "details": {
-        "users": 224, "rating": 10, "ratingBreakdown": [0, 0, 1, 0, 9],
-        "ratingUsers": 10, "reviews": 0,
-        "published": 1793880000000, "updated": 1793880000000
+        "users": 224,
+        "rating": 10,
+        "ratingBreakdown": [
+          0,
+          0,
+          1,
+          0,
+          9
+        ],
+        "ratingUsers": 10,
+        "reviews": 0,
+        "published": 1793880000000,
+        "updated": 1793880000000
       },
       "metadata": {
-        "name": "Recycle Bin File Preview", "author": "Luiz Bizzio",
-        "version": "1.0.0", "license": "MIT", "architecture": ["x86-64"]
+        "name": "Recycle Bin File Preview",
+        "author": "Luiz Bizzio",
+        "version": "1.0.0",
+        "license": "MIT",
+        "architecture": [
+          "x86-64"
+        ],
+        "github": "https://github.com/luizbizzio"
       }
     },
     "taskbar-zones": {
       "details": {
-        "users": 0, "rating": 0, "ratingBreakdown": [0, 0, 0, 0, 0],
-        "ratingUsers": 0, "reviews": 0, "published": 1793880000000
+        "users": 0,
+        "rating": 0,
+        "ratingBreakdown": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "ratingUsers": 0,
+        "reviews": 0,
+        "published": 1793880000000
       },
       "metadata": {
-        "name": "Taskbar Zones", "author": "Luiz Bizzio",
-        "version": "1.0.0", "license": "GPL-3.0", "architecture": ["x86-64"]
+        "name": "Taskbar Zones",
+        "author": "Luiz Bizzio",
+        "version": "1.0.0",
+        "license": "GPL-3.0",
+        "architecture": [
+          "x86-64"
+        ],
+        "github": "https://github.com/luizbizzio/taskbar-zones"
       }
     },
     "test-injection": {
-      "details": {"users": 1000, "ratingBreakdown": [0, 0, 0, 0, 2]},
-      "metadata": {"name": "<svg onload=alert(1)>", "version": "1.0 & <2", "license": "MIT\" & <script>"}
+      "details": {
+        "users": 1000,
+        "ratingBreakdown": [
+          0,
+          0,
+          0,
+          0,
+          2
+        ]
+      },
+      "metadata": {
+        "name": "<svg onload=alert(1)>",
+        "version": "1.0 & <2",
+        "license": "MIT\" & <script>",
+        "github": "https://github.com.evil.example/not-real"
+      }
     }
   }
 }

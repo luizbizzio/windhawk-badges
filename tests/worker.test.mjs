@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import worker, { normalizeCatalog, resolveColor, renderBadge, parseBadgePath } from '../worker/index.js';
+import worker, { normalizeCatalog, resolveColor, renderBadge, parseBadgePath, githubLink } from '../worker/index.js';
 
 const catalog = {
   mods: {
@@ -9,9 +9,9 @@ const catalog = {
         users: 150, ratingBreakdown: [0, 0, 1, 0, 9], ratingUsers: 10,
         reviews: 4, published: 1776098177000, updated: 1776098177000,
       },
-      metadata: { name: 'Taskbar Zones', author: 'Luiz Bizzio', version: '1.0.0', license: 'GPL-3.0' },
+      metadata: { name: 'Taskbar Zones', author: 'Luiz Bizzio', version: '1.0.0', license: 'GPL-3.0', github: 'https://github.com/luizbizzio/taskbar-zones' },
     },
-    malicious: { details: { users: 0 }, metadata: { name: 'test', author: '<script>x</script>', license: '<script>' } },
+    malicious: { details: { users: 0 }, metadata: { name: 'test', author: '<script>x</script>', license: '<script>', github: 'https://github.com.evil.test/fake' } },
   },
 };
 
@@ -26,6 +26,10 @@ test('normalizes all supported statistics', () => {
   assert.equal(mod.values.license, 'GPL-3.0');
   assert.equal(mod.values.published, '2026-04-13');
   assert.equal(normalized.kinds.users, 'Windhawk users');
+  assert.equal(normalized.kinds.github, 'GitHub');
+  assert.equal(mod.values.github, 'luizbizzio/taskbar-zones');
+  assert.equal(mod.githubUrl, 'https://github.com/luizbizzio/taskbar-zones');
+  assert.equal(normalized.mods.find(x => x.id === 'malicious').githubUrl, null);
   assert.equal(Object.keys(normalized.palette).length, 10);
   assert.equal(normalized.palette.indigo, undefined);
   assert.equal(normalized.palette.teal, undefined);
@@ -40,6 +44,12 @@ test('validates custom HEX colors and badge paths', () => {
   assert.equal(resolveColor('red<script>'), null);
   assert.deepEqual(parseBadgePath('/badges/taskbar-zones/users/green.svg'), { id:'taskbar-zones', kind:'users', preset:'green' });
   assert.deepEqual(parseBadgePath('/badges/taskbar-zones/users.svg'), { id:'taskbar-zones', kind:'users', preset:'blue' });
+  assert.deepEqual(parseBadgePath('/badges/taskbar-zones/github.svg'), { id:'taskbar-zones', kind:'github', preset:'blue' });
+  assert.equal(githubLink('https://github.com/luizbizzio').label, 'luizbizzio');
+  assert.equal(githubLink('https://www.github.com/luizbizzio/taskbar-zones/').url, 'https://github.com/luizbizzio/taskbar-zones');
+  assert.equal(githubLink('https://github.com.evil.test/luizbizzio'), null);
+  assert.equal(githubLink('javascript:alert(1)'), null);
+  assert.equal(githubLink('https://github.com@evil.test/luizbizzio'), null);
   assert.equal(parseBadgePath('/badges/taskbar-zones/foo.svg'), null);
   assert.equal(parseBadgePath('/badges/../../bad.svg'), null);
 });
@@ -130,6 +140,11 @@ test('handles appearance, short labels, and mod badge in dynamic URLs', async ()
     const modSVG = await mod.text();
     assert.match(modSVG, />Taskbar Zones<\/text>/);
     assert.doesNotMatch(modSVG, /Mod name<\/text>/);
+    const gitHub = await worker.fetch(new Request('https://example.workers.dev/badges/taskbar-zones/github.svg?size=compact&color=ff5733'), {}, context);
+    assert.equal(gitHub.status, 200);
+    const gitHubSvg = await gitHub.text();
+    assert.match(gitHubSvg, />GitHub<\/text>/);
+    assert.match(gitHubSvg, /luizbizzio\/taskbar-zones/);
     const wrongKind = await worker.fetch(new Request('https://example.workers.dev/badges/taskbar-zones/unknown.svg'), {}, context);
     assert.equal(wrongKind.status, 404);
     for (const bad of ['style=invalid', 'size=huge', 'labelMode=bad']) {

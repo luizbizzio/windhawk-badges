@@ -12,6 +12,7 @@ import re
 import shutil
 import sys
 from urllib.request import Request, urlopen
+from urllib.parse import urlsplit
 
 CATALOG_URL = "https://mods.windhawk.net/catalogs/en.json"
 MOD_ID_RE = re.compile(r"^[a-z0-9][a-z0-9-]{0,95}$")
@@ -26,6 +27,7 @@ BADGE_LABELS = {
     "published": "Published",
     "license": "License",
     "architecture": "Architecture",
+    "github": "GitHub",
 }
 BADGE_NAMES = tuple(BADGE_LABELS)
 PALETTE = {
@@ -88,6 +90,29 @@ def as_date(value: object) -> str:
         return "unknown"
 
 
+GITHUB_PATH_RE = re.compile(r"^/[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)*$")
+
+
+def github_info(raw: object) -> tuple[str, str] | None:
+    """Read the catalog's GitHub profile/repository URL without guessing a repo."""
+    if not isinstance(raw, str) or len(raw) > 400:
+        return None
+    try:
+        parsed = urlsplit(raw.strip())
+        host = parsed.hostname
+        port = parsed.port
+    except ValueError:
+        return None
+    if (parsed.scheme not in ("http", "https")
+            or host not in ("github.com", "www.github.com")
+            or parsed.username or parsed.password or port is not None):
+        return None
+    path = parsed.path.rstrip("/")
+    if not GITHUB_PATH_RE.fullmatch(path):
+        return None
+    return f"https://github.com{path}", path[1:]
+
+
 def normalize_mods(catalog: dict) -> list[dict]:
     mods = catalog.get("mods")
     if not isinstance(mods, dict) or not mods:
@@ -108,6 +133,7 @@ def normalize_mods(catalog: dict) -> list[dict]:
         architecture = metadata.get("architecture")
         if isinstance(architecture, list):
             architecture = ", ".join(safe_string(x, "", 20) for x in architecture if isinstance(x, str))
+        github = github_info(metadata.get('github'))
         values = {
             "users": f"{details['users']:,}" if valid_count(details.get("users")) is not None else "unknown",
             "rating": rating_text,
@@ -119,11 +145,13 @@ def normalize_mods(catalog: dict) -> list[dict]:
             "published": as_date(details.get("published")),
             "license": safe_string(metadata.get("license"), "not specified", 40),
             "architecture": safe_string(architecture, "not specified", 50),
+            "github": github[1] if github else "not specified",
         }
         normalized.append({
             "id": mod_id,
             "name": safe_string(metadata.get("name"), mod_id),
             "url": f"https://windhawk.net/mods/{mod_id}",
+            "githubUrl": github[0] if github else None,
             "values": values,
         })
     if not normalized:

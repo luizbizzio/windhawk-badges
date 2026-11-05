@@ -31,6 +31,8 @@ class GeneratorTests(unittest.TestCase):
                 ElementTree.fromstring(text)
             self.assertIn("&lt;script&gt;", badges["license"])
             self.assertNotIn("<script>", badges["license"])
+            self.assertEqual(injected["values"]["github"], "not specified")
+            self.assertIsNone(injected["githubUrl"])
 
     def test_complete_build_and_compatibility(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -46,7 +48,10 @@ class GeneratorTests(unittest.TestCase):
             self.assertEqual(mod["values"]["users"], "0")
             self.assertEqual(mod["values"]["rating"], "not rated")
             self.assertEqual(mod["values"]["license"], "GPL-3.0")
-            self.assertEqual(len(BADGE_NAMES), 10)
+            self.assertEqual(mod["values"]["github"], "luizbizzio/taskbar-zones")
+            self.assertEqual(mod["githubUrl"], "https://github.com/luizbizzio/taskbar-zones")
+            self.assertTrue((out / "badges/taskbar-zones/github.svg").exists())
+            self.assertEqual(len(BADGE_NAMES), 11)
             self.assertEqual(manifest["palette"]["blue"], "#2563eb")
             self.assertEqual(len(PALETTE), 10)
             self.assertNotIn("teal", manifest["palette"])

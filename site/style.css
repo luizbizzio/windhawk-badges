@@ -42,3 +42,8 @@
 .star-link:focus-visible{outline:2px solid #77c5ff;outline-offset:2px}
 .star-link span{color:#e6bb54;font-size:15px;line-height:1}
 @media(max-width:440px){.header-links{gap:9px}.top-link{display:none}.star-link{padding:5px 8px}}
+
+/* Keep the badge itself clickable for GitHub and Windhawk destinations. */
+.badge-preview-link{display:inline-flex;align-items:center;min-width:0;max-width:100%}
+.badge-preview-link:hover{opacity:.88}
+.badge-preview-link:focus-visible{outline:2px solid #77c5ff;outline-offset:2px;border-radius:3px}

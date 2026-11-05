@@ -14,6 +14,7 @@ const BADGE_LABELS = Object.freeze({
   license: 'License',
   architecture: 'Architecture',
   mod: 'Mod name',
+  github: 'GitHub',
 });
 const SHORT_LABELS = Object.freeze({
   users: 'Users', rating: 'Rating', votes: 'Votes',
@@ -53,6 +54,22 @@ function averageRating(details) {
   if (total === 0) return null;
   return bins.reduce((total, votes, index) => total + (index + 1) * votes, 0) / total;
 }
+/**
+ * The catalog's github field can point to an author profile or to a mod repository.
+ * Only accept actual github.com URLs. Never infer a repository from the mod ID.
+ */
+export function githubLink(raw) {
+  if (typeof raw !== 'string' || raw.length > 400) return null;
+  let link;
+  try { link = new URL(raw.trim()); } catch { return null; }
+  if (!['http:', 'https:'].includes(link.protocol) ||
+      !['github.com', 'www.github.com'].includes(link.hostname.toLowerCase()) ||
+      link.username || link.password || link.port) return null;
+  const path = link.pathname.replace(/\/+$/, '');
+  if (!/^\/[a-zA-Z0-9_.-]+(?:\/[a-zA-Z0-9_.-]+)*$/.test(path)) return null;
+  return { url: 'https://github.com' + path, label: path.slice(1) };
+}
+
 export function normalizeCatalog(source, generatedAt = new Date().toISOString()) {
   if (!source || typeof source !== 'object' || !source.mods || typeof source.mods !== 'object' || Array.isArray(source.mods)) {
     throw new Error('Unexpected Windhawk catalog format');
@@ -66,10 +83,12 @@ export function normalizeCatalog(source, generatedAt = new Date().toISOString())
     const rating = averageRating(details);
     const votes = count(details.ratingUsers) ?? (rating === null ? null : details.ratingBreakdown.reduce((a, b) => a + b, 0));
     const architecture = Array.isArray(metadata.architecture) ? metadata.architecture.filter(x => typeof x === 'string').join(', ') : metadata.architecture;
+    const github = githubLink(metadata.github);
     mods.push({
       id,
       name: text(metadata.name, id, 140),
       url: `https://windhawk.net/mods/${id}`,
+      githubUrl: github?.url ?? null,
       values: {
         mod: text(metadata.name, id, 140),
         users: formatNumber(count(details.users)),
@@ -82,6 +101,7 @@ export function normalizeCatalog(source, generatedAt = new Date().toISOString())
         published: dateLabel(details.published),
         license: text(metadata.license, 'not specified', 40),
         architecture: text(architecture, 'not specified', 50),
+        github: github?.label ?? 'not specified',
       },
     });
   }

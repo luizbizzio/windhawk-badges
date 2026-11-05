@@ -46,7 +46,8 @@ function badgeUrl(modId, kind, color) {
 function markdownFor(kind) {
   const link = badgeUrl(chosenMod.id, kind, chosenColor);
   const alt = kind === 'mod' ? chosenMod.name : kinds[kind];
-  return link ? `[![${alt.replaceAll('[', '\[').replaceAll(']', '\]')}](${link})](${chosenMod.url})` : '';
+  const destination = kind === 'github' ? chosenMod.githubUrl : chosenMod.url;
+  return link && destination ? `[![${alt.replaceAll('[', '\[').replaceAll(']', '\]')}](${link})](${chosenMod.url})` : '';
 }
 
 function closeResults() {
@@ -182,12 +183,25 @@ function renderBadges() {
     actions.className = 'badge-actions';
     const md = button('Markdown', () => markdownFor(kind), true);
     const urlButton = button('URL', () => badgeUrl(chosenMod.id, kind, chosenColor));
-    md.disabled = !url;
+    md.disabled = !url || (kind === 'github' && !chosenMod.githubUrl);
+    if (kind === 'github' && !chosenMod.githubUrl) md.title = 'No GitHub link in the Windhawk catalog';
     urlButton.disabled = !url;
     actions.append(md, urlButton);
     if (url) {
       availableCount++;
-      row.append(preview, actions);
+      const destination = kind === 'github' ? chosenMod.githubUrl : (kind === 'mod' ? chosenMod.url : null);
+      if (destination) {
+        const clickableBadge = document.createElement('a');
+        clickableBadge.href = destination;
+        clickableBadge.target = '_blank';
+        clickableBadge.rel = 'noopener noreferrer';
+        clickableBadge.className = 'badge-preview-link';
+        clickableBadge.title = kind === 'github' ? 'Open the GitHub link from the Windhawk catalog' : 'Open mod on Windhawk';
+        clickableBadge.append(preview);
+        row.append(clickableBadge, actions);
+      } else {
+        row.append(preview, actions);
+      }
     } else {
       const help = document.createElement('span');
       help.className = 'custom-unavailable';
@@ -234,7 +248,11 @@ async function start() {
     const catalog = await response.json();
     if (!Array.isArray(catalog.mods) || !catalog.mods.length) throw new Error('No mods found');
     mods = catalog.mods;
-    kinds = { ...catalog.kinds, mod: 'Mod name' }; 
+    kinds = { ...catalog.kinds };
+    delete kinds.mod;
+    delete kinds.github;
+    kinds.mod = 'Mod name';
+    kinds.github = 'GitHub';
     palette = catalog.palette;
     chosenColor = catalog.defaultColor || 'blue';
     if (!palette[chosenColor] || Object.keys(palette).length !== 10) throw new Error('Invalid palette');
