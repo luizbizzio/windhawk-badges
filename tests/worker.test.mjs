@@ -317,3 +317,19 @@ test('site uses the official Windhawk logo and accessible footer links', () => {
   assert.match(html, /id="updated" class="footer-updated"/);
   assert.match(styles, /\.footer-bottom\{/);
 });
+
+test('site header and favicon use the official Windhawk SVG', () => {
+  const html = readFileSync(new URL('../site/index.html', import.meta.url), 'utf8');
+  const css = readFileSync(new URL('../site/style.css', import.meta.url), 'utf8');
+  const favicon = readFileSync(new URL('../site/assets/favicon.svg', import.meta.url), 'utf8');
+  const logo = readFileSync(new URL('../site/assets/windhawk-logo.svg', import.meta.url), 'utf8');
+  const pathMatch = logo.match(/<path fill="#ffffff" stroke-width="0" d="([^"]+)"/);
+  assert.ok(pathMatch, 'Official logo path should be present');
+  assert.match(html, /<link rel="icon" type="image\/svg\+xml" href="\.\/assets\/favicon\.svg" sizes="any">/);
+  assert.ok(favicon.includes(pathMatch[1]), 'Favicon should use the official logo vector');
+  assert.match(favicon, /<rect x="1" y="1" width="62" height="62" rx="13"/);
+  assert.match(html, /class="brand-copy"/);
+  assert.match(html, /class="brand-subtitle">Custom SVG badges for mods/);
+  assert.match(html, /class="star-symbol"/);
+  assert.match(css, /@media\(max-width:440px\)/);
+});

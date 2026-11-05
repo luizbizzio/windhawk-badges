@@ -43,6 +43,8 @@ class GeneratorTests(unittest.TestCase):
             self.assertTrue((out / "sitemap.xml").exists())
             self.assertTrue((out / ".nojekyll").exists())
             self.assertTrue((out / "badges/taskbar-zones/users.svg").exists())
+            self.assertTrue((out / "assets/favicon.svg").exists())
+            ElementTree.parse(out / "assets/favicon.svg")
             self.assertTrue((out / "badges/taskbar-zones/users/red.svg").exists())
             self.assertTrue((out / "badges/recycle-bin-file-preview/author/green.svg").exists())
             manifest = json.loads((out / "data/catalog.json").read_text(encoding="utf-8"))

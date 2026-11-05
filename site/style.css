@@ -1,7 +1,17 @@
 :root{color-scheme:dark;font-family:Segoe UI,Arial,Helvetica,sans-serif;font-size:14px;line-height:1.5;background:#202020;color:#f1f1f1}
 *{box-sizing:border-box}body{margin:0;background:#202020;min-height:100vh;display:flex;flex-direction:column}a{color:#5eb5ff;text-decoration:none}a:hover{text-decoration:underline}button,input{font:inherit}button{cursor:pointer}
-.topbar{background:#191919;border-bottom:1px solid #343434}.topbar-inner{max-width:1050px;margin:auto;height:60px;padding:0 26px;display:flex;align-items:center;justify-content:space-between}
-.brand{font-size:17px;font-weight:600;color:#f4f4f4;display:flex;gap:10px;align-items:center}.brand:hover{text-decoration:none}.brand-mark{width:30px;height:30px;display:inline-grid;place-items:center;border-radius:6px;background:#2799ec;flex-shrink:0}.brand-mark img{display:block;width:25px;height:25px}.brand-muted{font-weight:400;color:#c2c2c2}.top-link{color:#b8b8b8;font-size:13px}
+.topbar{background:linear-gradient(180deg,#202328 0%,#1a1c1f 100%);border-bottom:1px solid #3c4149}
+.topbar-inner{max-width:1050px;width:100%;margin:auto;min-height:70px;padding:11px 26px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand{display:inline-flex;align-items:center;gap:11px;min-width:0;color:#f4f4f4;text-decoration:none}
+.brand:hover{text-decoration:none}
+.brand-mark{width:39px;height:39px;flex-shrink:0;display:grid;place-items:center;border-radius:9px;background:linear-gradient(145deg,#329de4,#177cc4);border:1px solid #ffffff26;box-shadow:0 2px 8px #0004}
+.brand-mark img{display:block;width:30px;height:30px}
+.brand-copy{display:flex;flex-direction:column;gap:1px;min-width:0}
+.brand-title{font-size:17px;font-weight:650;letter-spacing:-.25px;line-height:1.3;white-space:nowrap}
+.brand-muted{font-weight:400;color:#c5d0da}
+.brand-subtitle{font-size:11px;line-height:1.3;color:#9da7b3;white-space:nowrap}
+.top-link{color:#bfc7d1;font-size:12px;font-weight:500;white-space:nowrap}
+.top-link:hover{color:#fff;text-decoration:none}
 .main{max-width:1050px;width:100%;margin:0 auto;padding:42px 26px 60px;flex:1}.page-heading h1{font-size:27px;line-height:1.2;font-weight:600;margin:0 0 8px;letter-spacing:-.4px}.page-heading p{color:#b9b9b9;margin:0 0 30px;font-size:14px}
 .panel{background:#252525;border:1px solid #3b3b3b;border-radius:6px;padding:24px;margin-bottom:20px}.panel h2{font-weight:600;font-size:17px;margin:0 0 20px}
 .configurator{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);column-gap:28px;row-gap:22px}.configurator h2{grid-column:1/-1;margin-bottom:0}.field label,.field-label{font-weight:600;font-size:13px;display:block;margin-bottom:9px;color:#e4e4e4}.search-wrap{position:relative}
@@ -49,12 +59,14 @@
 @media(max-width:600px){.appearance-controls{grid-template-columns:repeat(2,minmax(0,1fr))}.appearance-field{padding-top:16px}.appearance-hint{display:none}}
 
 /* GitHub star link: visible without distracting from the badge editor. */
-.header-links{display:flex;align-items:center;gap:16px}
-.star-link{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border:1px solid #505050;background:#292929;border-radius:5px;color:#ededed;font-size:12px;font-weight:500;white-space:nowrap}
-.star-link:hover{background:#363636;border-color:#737373;text-decoration:none}
+.header-links{display:flex;align-items:center;justify-content:flex-end;gap:19px;flex-shrink:0}
+.star-link{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:36px;padding:7px 13px;border:1px solid #505a68;background:#292f38;border-radius:6px;color:#edf3f8;font-size:12px;font-weight:600;white-space:nowrap;transition:background .15s,border-color .15s}
+.star-link:hover{background:#354353;border-color:#7096b9;text-decoration:none}
 .star-link:focus-visible{outline:2px solid #77c5ff;outline-offset:2px}
-.star-link span{color:#e6bb54;font-size:15px;line-height:1}
-@media(max-width:440px){.header-links{gap:9px}.top-link{display:none}.star-link{padding:5px 8px}}
+.star-link .star-symbol{color:#e8be60;font-size:15px;line-height:1}
+@media(max-width:600px){.topbar-inner{min-height:62px;gap:10px}.brand-mark{width:34px;height:34px;border-radius:8px}.brand-mark img{width:26px;height:26px}.brand-title{font-size:15px}.brand-subtitle{font-size:10px}.header-links{gap:11px}.star-link{padding:6px 10px;min-height:34px}}
+@media(max-width:440px){.brand-subtitle{display:none}.header-links{gap:9px}.top-link{display:none}.star-link{padding:6px 9px}}
+@media(max-width:340px){.star-link .star-text{display:none}.star-link{width:35px}.brand-title{font-size:14px}}
 
 /* Keep the badge itself clickable for GitHub and Windhawk destinations. */
 .badge-preview-link{display:inline-flex;align-items:center;min-width:0;max-width:100%}
