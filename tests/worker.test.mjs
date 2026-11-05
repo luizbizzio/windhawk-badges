@@ -296,3 +296,10 @@ test('client Markdown escaping and multi-line copy are preserved', () => {
   assert.match(appSource, /escapeMarkdownAlt\(alt\)/);
   assert.match(appSource, /\.map\(markdownFor\)\.filter\(Boolean\)\.join\('\\n'\)/);
 });
+
+test('default site example is Windows 11 Taskbar Styler with URL override preserved', () => {
+  const app = readFileSync(new URL('../site/app.js', import.meta.url), 'utf8');
+  assert.match(app, /const requested = new URL\(window\.location\.href\)\.searchParams\.get\('mod'\)/);
+  assert.match(app, /chooseMod\(mods\.find\(mod => mod\.id === requested\) \|\| mods\.find\(mod => mod\.id === 'windows-11-taskbar-styler'\) \|\| mods\[0\]\)/);
+  assert.doesNotMatch(app, /mod\.id === 'taskbar-zones'\) \|\| mods\[0\]/);
+});
