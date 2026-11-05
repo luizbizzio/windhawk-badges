@@ -260,7 +260,7 @@ test('browser preview renderer matches Worker without sending badge requests', (
   assert.match(html, /value="windhawk" selected/);
   assert.match(html, /id="iconBgHex"[^>]*value="#000000"/);
   const cssSource = readFileSync(new URL('../site/style.css', import.meta.url), 'utf8');
-  assert.match(cssSource, /\.hex-customization\{grid-column:1\/-1;display:grid;grid-template-columns:repeat\(6,minmax\(0,1fr\)\)/);
+assert.match(cssSource, /\.hex-customization\s*\{[^}]*grid-template-columns:repeat\(6,minmax\(0,1fr\)\)/);
   assert.match(app, /let chosenIconBgColor = '#000000'/);
   assert.match(html, /<option value="full">Full<\/option>/);
   assert.match(html, /<option value="short">Short<\/option>/);
@@ -308,7 +308,7 @@ test('site uses the official Windhawk logo and accessible footer links', () => {
   const html = readFileSync(new URL('../site/index.html', import.meta.url), 'utf8');
   const styles = readFileSync(new URL('../site/style.css', import.meta.url), 'utf8');
   const logo = readFileSync(new URL('../site/assets/windhawk-logo.svg', import.meta.url), 'utf8');
-  assert.match(html, /class="brand-mark" aria-hidden="true"><img src="\.\/assets\/windhawk-logo\.svg"/);
+  assert.match(html, /class="brand-mark page-logo" aria-hidden="true"><img src="\.\/assets\/windhawk-logo\.svg"/);
   assert.equal(html.includes('brand-mark" aria-hidden="true">W</span>'), false);
   assert.match(logo, /<svg /);
   assert.match(logo, /<path fill="#ffffff"/);
@@ -328,10 +328,10 @@ test('site header and favicon use the official Windhawk SVG', () => {
   assert.match(html, /<link rel="icon" type="image\/svg\+xml" href="\.\/assets\/favicon\.svg" sizes="any">/);
   assert.ok(favicon.includes(pathMatch[1]), 'Favicon should use the official logo vector');
   assert.match(favicon, /<rect x="1" y="1" width="62" height="62" rx="13"/);
-  assert.match(html, /class="brand-copy"/);
-  assert.match(html, /class="brand-subtitle">Custom SVG badges for mods/);
-  assert.match(html, /class="star-symbol"/);
-  assert.match(css, /@media\(max-width:440px\)/);
+  assert.match(html, /class="page-title-row"/);
+  assert.match(html, /class="page-heading-meta"/);
+  assert.match(html, /<nav class="page-links" aria-label="Project links">/);
+  assert.match(css, /@media\(max-width:600px\)/);
 });
 
 test('catalog summary is visible at the top and shares the footer data', () => {
@@ -344,8 +344,20 @@ test('catalog summary is visible at the top and shares the footer data', () => {
   assert.match(app, /getElementById\('catalogSummary'\)\.textContent = catalogStatus/);
   assert.match(app, /getElementById\('updated'\)\.textContent = catalogStatus/);
   assert.match(css, /\.catalog-summary\{/);
-  assert.match(css, /\.page-heading\{display:flex/);
+  assert.match(css, /\.page-heading\s*\{display:flex/);
   assert.match(html, /class="footer-brand"/);
   assert.match(html, /class="footer-brand"[\s\S]*?src="\.\/assets\/windhawk-logo\.svg"/);
   assert.match(readme, /<div align="center">\s*<img src="site\/assets\/favicon\.svg" alt="Windhawk Badges logo"/);
+});
+
+test('Windhawk-style layout places project links above catalog status on the right', () => {
+  const html = readFileSync(new URL('../site/index.html', import.meta.url), 'utf8');
+  const styles = readFileSync(new URL('../site/style.css', import.meta.url), 'utf8');
+  assert.doesNotMatch(html, /<header class="topbar">/);
+  assert.match(html, /class="page-heading-meta"[\s\S]*?<nav class="page-links"[\s\S]*?Windhawk[\s\S]*?GitHub[\s\S]*?id="catalogSummary"/);
+  assert.match(styles, /\.page-heading-meta\s*\{display:flex;flex-direction:column;align-items:flex-end/);
+  assert.match(html, /<h1>Windhawk Badges<\/h1>/);
+  for (const id of ['search', 'colors', 'badgeGrid', 'copyAll', 'badgeIcon', 'updated']) {
+    assert.ok(html.includes('id="' + id + '"'));
+  }
 });

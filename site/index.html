@@ -34,142 +34,82 @@
   <script type="module" src="./app.js"></script>
 </head>
 <body>
-  <header class="topbar">
-    <div class="topbar-inner">
-      <a class="brand" href="./" aria-label="Windhawk Badges home">
-        <span class="brand-mark" aria-hidden="true"><img src="./assets/windhawk-logo.svg" alt="" width="29" height="29"></span>
-        <span class="brand-copy">
-          <span class="brand-title">Windhawk <span class="brand-muted">Badges</span></span>
-          <span class="brand-subtitle">Custom SVG badges for mods</span>
-        </span>
-      </a>
-      <nav class="header-links" aria-label="External links">
-        <a class="top-link" href="https://windhawk.net/" target="_blank" rel="noopener noreferrer">Windhawk <span aria-hidden="true">↗</span></a>
-        <a class="star-link" href="https://github.com/luizbizzio/windhawk-badges" target="_blank" rel="noopener noreferrer" aria-label="Star Windhawk Badges on GitHub"><span class="star-symbol" aria-hidden="true">★</span><span class="star-text">Star on GitHub</span></a>
-      </nav>
-    </div>
-  </header>
   <main class="main">
     <div class="page-heading">
       <div class="page-heading-copy">
-        <h1>Windhawk Badges</h1>
-        <p>Badges for any Windhawk mod. Customize the appearance, then copy the Markdown into your README.</p>
+        <div class="page-title-row">
+          <span class="brand-mark page-logo" aria-hidden="true"><img src="./assets/windhawk-logo.svg" alt="" width="36" height="36"></span>
+          <h1>Windhawk Badges</h1>
+        </div>
+        <p>Custom badges for any Windhawk mod. Choose a mod, set the appearance, and copy the Markdown.</p>
       </div>
-      <div id="catalogSummary" class="catalog-summary" role="status" aria-live="polite">Loading catalog…</div>
+      <div class="page-heading-meta">
+        <nav class="page-links" aria-label="Project links">
+          <a href="https://windhawk.net/" target="_blank" rel="noopener noreferrer">Windhawk <span aria-hidden="true">↗</span></a>
+          <a href="https://github.com/luizbizzio/windhawk-badges" target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a>
+        </nav>
+        <div id="catalogSummary" class="catalog-summary" role="status" aria-live="polite">Loading catalog…</div>
+      </div>
     </div>
+
     <section class="panel configurator" aria-labelledby="configure-title">
-      <h2 id="configure-title">Customize</h2>
-      <div class="field">
-        <label for="search">Windhawk mod</label>
-        <div class="search-wrap">
-          <input id="search" type="search" placeholder="Search by mod name or ID" autocomplete="off" aria-controls="results" aria-expanded="false" aria-autocomplete="list">
-          <div id="results" class="results" role="listbox" aria-label="Matching mods" hidden></div>
+      <div class="panel-heading">
+        <div><span class="section-kicker">BADGE EDITOR</span><h2 id="configure-title">Customize</h2></div>
+        <span class="panel-heading-note">Changes apply to all badges</span>
+      </div>
+      <div class="editor-grid">
+        <div class="field mod-field">
+          <label for="search">Windhawk mod</label>
+          <div class="search-wrap">
+            <input id="search" type="search" placeholder="Search by name or mod ID" autocomplete="off" aria-controls="results" aria-expanded="false" aria-autocomplete="list" role="combobox">
+            <div id="results" class="results" role="listbox" aria-label="Matching mods" hidden></div>
+          </div>
+          <div id="selectedMod" class="selected-mod" hidden>
+            <div class="selected-details"><strong id="selectedName"></strong><span id="selectedId"></span></div>
+            <a id="modLink" target="_blank" rel="noopener noreferrer">View mod ↗</a>
+          </div>
         </div>
-        <div id="selectedMod" class="selected-mod" hidden>
-          <div class="selected-details"><strong id="selectedName"></strong><span id="selectedId"></span></div>
-          <a id="modLink" target="_blank" rel="noopener noreferrer">View mod ↗</a>
+        <div class="field color-field">
+          <div class="color-header"><span class="field-label" id="color-label">Badge color</span><span class="color-name" id="colorName">Blue</span></div>
+          <div id="colors" class="swatches" role="group" aria-labelledby="color-label"></div>
         </div>
       </div>
-      <div class="field color-field">
-        <div class="color-header"><span class="field-label" id="color-label">Badge color</span><span id="colorName" class="color-name">Blue</span></div>
-        <div id="colors" class="swatches" role="group" aria-labelledby="color-label"></div>
-      </div>
+      <div class="editor-section-title"><span>Custom colors</span><span class="field-help">HEX</span></div>
       <div class="hex-customization" role="group" aria-label="Badge colors">
-          <div class="hex-item" id="valueField">
-            <label for="valueHex">Value background</label>
-            <div class="hex-row"><input id="valuePicker" type="color" value="#2563eb" aria-label="Value background"><input id="valueHex" type="text" maxlength="7" value="#2563eb" spellcheck="false" aria-label="Value background HEX"></div>
-          </div>
-          <div class="hex-item" id="labelField">
-            <label for="labelHex">Label background</label>
-            <div class="hex-row"><input id="labelPicker" type="color" value="#555555" aria-label="Label background"><input id="labelHex" type="text" maxlength="7" value="#555555" spellcheck="false" aria-label="Label background HEX"></div>
-          </div>
-          <div class="hex-item" id="iconBgField">
-            <label for="iconBgHex">Icon background</label>
-            <div class="hex-row"><input id="iconBgPicker" type="color" value="#000000" aria-label="Icon background"><input id="iconBgHex" type="text" maxlength="7" value="#000000" spellcheck="false" aria-label="Icon background HEX"></div>
-          </div>
-          <div class="hex-item" id="iconColorField">
-            <label for="iconColorHex">Icon color</label>
-            <div class="hex-row"><input id="iconColorPicker" type="color" value="#ffffff" aria-label="Icon color"><input id="iconColorHex" type="text" maxlength="7" value="#ffffff" spellcheck="false" aria-label="Icon color HEX"></div>
-          </div>
-          <div class="hex-item" id="labelTextField">
-            <label for="labelTextHex">Label text</label>
-            <div class="hex-row"><input id="labelTextPicker" type="color" value="#ffffff" aria-label="Label text"><input id="labelTextHex" type="text" maxlength="7" value="#ffffff" spellcheck="false" aria-label="Label text HEX"></div>
-          </div>
-          <div class="hex-item" id="valueTextField">
-            <label for="valueTextHex">Value text</label>
-            <div class="hex-row"><input id="valueTextPicker" type="color" value="#ffffff" aria-label="Value text"><input id="valueTextHex" type="text" maxlength="7" value="#ffffff" spellcheck="false" aria-label="Value text HEX"></div>
-          </div>
+        <div class="hex-item" id="valueField"><label for="valueHex">Value background</label><div class="hex-row"><input id="valuePicker" type="color" value="#2563eb" aria-label="Value background"><input id="valueHex" type="text" maxlength="7" value="#2563eb" spellcheck="false" aria-label="Value background HEX"></div></div>
+        <div class="hex-item" id="labelField"><label for="labelHex">Label background</label><div class="hex-row"><input id="labelPicker" type="color" value="#555555" aria-label="Label background"><input id="labelHex" type="text" maxlength="7" value="#555555" spellcheck="false" aria-label="Label background HEX"></div></div>
+        <div class="hex-item" id="iconBgField"><label for="iconBgHex">Icon background</label><div class="hex-row"><input id="iconBgPicker" type="color" value="#000000" aria-label="Icon background"><input id="iconBgHex" type="text" maxlength="7" value="#000000" spellcheck="false" aria-label="Icon background HEX"></div></div>
+        <div class="hex-item" id="iconColorField"><label for="iconColorHex">Icon color</label><div class="hex-row"><input id="iconColorPicker" type="color" value="#ffffff" aria-label="Icon color"><input id="iconColorHex" type="text" maxlength="7" value="#ffffff" spellcheck="false" aria-label="Icon color HEX"></div></div>
+        <div class="hex-item" id="labelTextField"><label for="labelTextHex">Label text</label><div class="hex-row"><input id="labelTextPicker" type="color" value="#ffffff" aria-label="Label text"><input id="labelTextHex" type="text" maxlength="7" value="#ffffff" spellcheck="false" aria-label="Label text HEX"></div></div>
+        <div class="hex-item" id="valueTextField"><label for="valueTextHex">Value text</label><div class="hex-row"><input id="valueTextPicker" type="color" value="#ffffff" aria-label="Value text"><input id="valueTextHex" type="text" maxlength="7" value="#ffffff" spellcheck="false" aria-label="Value text HEX"></div></div>
       </div>
-      <div class="field appearance-field">
-        <div class="appearance-heading"><span class="field-label">Appearance</span><span class="appearance-hint">Changes apply to every badge</span></div>
+      <div class="editor-section-title appearance-section-label"><span>Appearance</span></div>
+      <div class="appearance-field">
         <div class="appearance-controls">
-          <div>
-            <label for="badgeStyle">Style</label>
-            <select id="badgeStyle">
-              <option value="classic">Classic</option>
-              <option value="flat">Flat</option>
-              <option value="flat-square">Flat square</option>
-              <option value="rounded">Rounded</option>
-              <option value="pill">Pill</option>
-            </select>
-          </div>
-          <div>
-            <label for="badgeSize">Size</label>
-            <select id="badgeSize">
-              <option value="normal">Normal</option>
-              <option value="compact">Compact</option>
-            </select>
-          </div>
-          <div>
-            <label for="badgeLabels">Labels</label>
-            <select id="badgeLabels">
-              <option value="full">Full</option>
-              <option value="short">Short</option>
-            </select>
-          </div>
-          <div>
-            <label for="badgeIcon">Icon</label>
-            <select id="badgeIcon">
-              <option value="none">None</option>
-              <option value="windhawk" selected>Windhawk</option>
-            </select>
-          </div>
+          <div class="select-field"><label for="badgeStyle">Style</label><select id="badgeStyle"><option value="classic">Classic</option><option value="flat">Flat</option><option value="flat-square">Flat square</option><option value="rounded">Rounded</option><option value="pill">Pill</option></select></div>
+          <div class="select-field"><label for="badgeSize">Size</label><select id="badgeSize"><option value="normal">Normal</option><option value="compact">Compact</option></select></div>
+          <div class="select-field"><label for="badgeLabels">Labels</label><select id="badgeLabels"><option value="full">Full</option><option value="short">Short</option></select></div>
+          <div class="select-field"><label for="badgeIcon">Icon</label><select id="badgeIcon"><option value="none">None</option><option value="windhawk" selected>Windhawk</option></select></div>
         </div>
       </div>
     </section>
     <section class="panel output" aria-labelledby="output-title">
       <div class="output-header">
-        <div><h2 id="output-title">Available badges</h2><p>All badges for the selected mod.</p></div>
+        <div><span class="section-kicker">BADGE PREVIEW</span><h2 id="output-title">Available badges</h2><p>Copy one badge or all the Markdown at once.</p></div>
         <button id="copyAll" class="button button-primary" type="button" disabled>Copy all Markdown</button>
       </div>
       <div id="badgeGrid" class="badge-grid" aria-live="polite"></div>
       <p id="status" class="status" role="status">Loading the Windhawk catalog…</p>
     </section>
-    <p class="source-note">Data comes from the <a href="https://mods.windhawk.net/catalogs/en.json" target="_blank" rel="noopener noreferrer">public Windhawk catalog</a> and is cached for up to 6 hours. User counts are provided by the official Windhawk catalog. Ratings are calculated from star votes.</p>
+    <p class="source-note">Data from the <a href="https://mods.windhawk.net/catalogs/en.json" target="_blank" rel="noopener noreferrer">official Windhawk catalog</a>. Badge values may be cached for up to 6 hours.</p>
   </main>
   <footer class="footer">
     <div class="footer-inner">
       <div class="footer-main">
-        <div class="footer-about">
-          <div class="footer-brand">
-            <span class="brand-mark" aria-hidden="true"><img src="./assets/windhawk-logo.svg" alt="" width="30" height="30"></span>
-            <div>
-              <strong>Windhawk Badges</strong>
-              <p>Custom badges for Windhawk mods. Free and open source.</p>
-            </div>
-          </div>
-        </div>
-        <nav class="footer-links" aria-label="Footer links">
-          <a href="https://windhawk.net/" target="_blank" rel="noopener noreferrer">Windhawk</a>
-          <a href="https://github.com/luizbizzio/windhawk-badges" target="_blank" rel="noopener noreferrer">GitHub</a>
-          <a href="https://github.com/luizbizzio/windhawk-badges/issues" target="_blank" rel="noopener noreferrer">Report an issue</a>
-          <a href="https://github.com/luizbizzio/windhawk-badges/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">License</a>
-        </nav>
+        <div class="footer-brand"><span class="brand-mark" aria-hidden="true"><img src="./assets/windhawk-logo.svg" alt="" width="24" height="24"></span><div><strong>Windhawk Badges</strong><p>A free, open-source community tool.</p></div></div>
+        <nav class="footer-links" aria-label="Footer links"><a href="https://windhawk.net/" target="_blank" rel="noopener noreferrer">Windhawk</a><a href="https://github.com/luizbizzio/windhawk-badges" target="_blank" rel="noopener noreferrer">Source code</a><a href="https://github.com/luizbizzio/windhawk-badges/issues" target="_blank" rel="noopener noreferrer">Report an issue</a><a href="https://github.com/luizbizzio/windhawk-badges/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">License</a></nav>
       </div>
-      <div class="footer-bottom">
-        <span>© 2026 <a href="https://github.com/luizbizzio" target="_blank" rel="noopener noreferrer">Luiz Bizzio</a>. Independent project, not affiliated with Windhawk.</span>
-        <span id="updated" class="footer-updated">Catalog data pending</span>
-      </div>
+      <div class="footer-bottom"><span>© 2026 <a href="https://github.com/luizbizzio" target="_blank" rel="noopener noreferrer">Luiz Bizzio</a>. Independent project, not affiliated with Windhawk.</span><span id="updated" class="footer-updated">Catalog data pending</span></div>
     </div>
   </footer>
 </body>
