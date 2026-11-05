@@ -1,44 +1,23 @@
-name: Build and deploy badges
+name: Test badge worker
 
 on:
   push:
     branches: [main]
-  schedule:
-    - cron: '37 5 * * *'
+  pull_request:
   workflow_dispatch:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: windhawk-badges-pages
-  cancel-in-progress: true
 
 jobs:
-  deploy:
+  test:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Python
-        uses: actions/setup-python@v5
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          python-version: '3.12'
-      - name: Tests
-        run: python -m unittest discover -s tests -v
-      - name: Generate badges
-        run: python scripts/generate.py --output dist
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist
-      - name: Deploy Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          node-version: '22'
+      - name: Test worker
+        run: node --test tests/worker.test.mjs

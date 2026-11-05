@@ -14,13 +14,13 @@
   <header class="topbar">
     <div class="topbar-inner">
       <a class="brand" href="./" aria-label="Windhawk Badges home"><span class="brand-mark" aria-hidden="true">W</span><span>Windhawk <span class="brand-muted">Badges</span></span></a>
-      <a class="top-link" href="https://github.com/luizbizzio/windhawk-badges" target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a>
+      <a class="top-link" href="https://windhawk.net/" target="_blank" rel="noopener noreferrer">Windhawk <span aria-hidden="true">↗</span></a>
     </div>
   </header>
   <main class="main">
     <div class="page-heading">
       <h1>Windhawk Badges</h1>
-      <p>Badges for any Windhawk mod. Choose a color and copy the Markdown into your README.</p>
+      <p>Badges for any Windhawk mod. Choose any HEX color and copy the Markdown into your README.</p>
     </div>
     <section class="panel configurator" aria-labelledby="configure-title">
       <h2 id="configure-title">Customize</h2>
@@ -38,7 +38,17 @@
       <div class="field color-field">
         <div class="color-header"><span class="field-label" id="color-label">Badge color</span><span id="colorName" class="color-name">Blue</span></div>
         <div id="colors" class="swatches" role="group" aria-labelledby="color-label"></div>
-        <p class="field-note">All 12 colors update automatically when the Windhawk catalog changes.</p>
+        <div class="hex-customization">
+          <div class="hex-item">
+            <label for="valueHex">Value color (HEX)</label>
+            <div class="hex-row"><input id="valuePicker" type="color" value="#2563eb" aria-label="Select value color"><input id="valueHex" type="text" maxlength="7" value="#2563eb" spellcheck="false" aria-label="Value color HEX"></div>
+          </div>
+          <div class="hex-item">
+            <label for="labelHex">Label color (HEX)</label>
+            <div class="hex-row"><input id="labelPicker" type="color" value="#555555" aria-label="Select label color"><input id="labelHex" type="text" maxlength="7" value="#555555" spellcheck="false" aria-label="Label color HEX"></div>
+          </div>
+        </div>
+        <p class="field-note">Custom HEX and preset colors stay updated automatically. No downloads or setup needed.</p>
       </div>
     </section>
     <section class="panel output" aria-labelledby="output-title">
@@ -49,7 +59,7 @@
       <div id="badgeGrid" class="badge-grid" aria-live="polite"></div>
       <p id="status" class="status" role="status">Loading the Windhawk catalog…</p>
     </section>
-    <p class="source-note">Data comes from the <a href="https://mods.windhawk.net/catalogs/en.json" target="_blank" rel="noopener noreferrer">public Windhawk catalog</a> and is refreshed daily. Users are not download counts. Ratings are calculated from star votes.</p>
+    <p class="source-note">Data comes from the <a href="https://mods.windhawk.net/catalogs/en.json" target="_blank" rel="noopener noreferrer">public Windhawk catalog</a> and is cached for up to 6 hours. Users are not download counts. Ratings are calculated from star votes.</p>
   </main>
   <footer class="footer"><div><span>Independent community project. Not affiliated with Windhawk.</span><span id="updated">Catalog data pending</span></div></footer>
 </body>

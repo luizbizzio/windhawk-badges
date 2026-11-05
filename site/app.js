@@ -9,14 +9,25 @@ const copyAll = document.getElementById('copyAll');
 const status = document.getElementById('status');
 const selectedMod = document.getElementById('selectedMod');
 const baseUrl = new URL('./', window.location.href);
+const valueHex = document.getElementById('valueHex');
+const valuePicker = document.getElementById('valuePicker');
+const labelHex = document.getElementById('labelHex');
+const labelPicker = document.getElementById('labelPicker');
 let mods = [];
 let kinds = {};
 let palette = {};
 let chosenMod = null;
 let chosenColor = 'blue';
+let chosenLabelColor = '#555555';
 
 function badgeUrl(modId, kind, color) {
-  return new URL(`badges/${encodeURIComponent(modId)}/${encodeURIComponent(kind)}/${encodeURIComponent(color)}.svg`, baseUrl).href;
+  const path = palette[color]
+    ? `badges/${encodeURIComponent(modId)}/${encodeURIComponent(kind)}/${encodeURIComponent(color)}.svg`
+    : `badges/${encodeURIComponent(modId)}/${encodeURIComponent(kind)}.svg`;
+  const url = new URL(path, baseUrl);
+  if (!palette[color]) url.searchParams.set('color', color.replace('#', ''));
+  if (chosenLabelColor !== '#555555') url.searchParams.set('labelColor', chosenLabelColor.slice(1));
+  return url.href;
 }
 function markdownFor(kind) {
   const link = badgeUrl(chosenMod.id, kind, chosenColor);
@@ -68,7 +79,11 @@ function searchMods() {
 }
 function renderColors() {
   colors.replaceChildren();
-  colorName.textContent = chosenColor.charAt(0).toUpperCase() + chosenColor.slice(1);
+  colorName.textContent = palette[chosenColor] ? chosenColor.charAt(0).toUpperCase() + chosenColor.slice(1) : `Custom ${chosenColor}`;
+  valueHex.value = palette[chosenColor] || chosenColor;
+  valuePicker.value = palette[chosenColor] || chosenColor;
+  labelHex.value = chosenLabelColor;
+  labelPicker.value = chosenLabelColor;
   for (const [name, hex] of Object.entries(palette)) {
     const button = document.createElement('button');
     button.className = 'swatch';
@@ -85,6 +100,34 @@ function renderColors() {
     colors.append(button);
   }
 }
+function validHex(raw) {
+  const value = raw.trim();
+  return /^#?[0-9a-f]{6}$/i.test(value) ? '#' + value.replace(/^#/, '').toLowerCase() : null;
+}
+function applyValueHex(raw) {
+  const hex = validHex(raw);
+  if (!hex) return;
+  chosenColor = hex;
+  renderColors();
+  renderBadges();
+}
+function applyLabelHex(raw) {
+  const hex = validHex(raw);
+  if (!hex) return;
+  chosenLabelColor = hex;
+  renderColors();
+  renderBadges();
+}
+valuePicker.addEventListener('input', () => applyValueHex(valuePicker.value));
+valueHex.addEventListener('change', () => {
+  if (validHex(valueHex.value)) applyValueHex(valueHex.value);
+  else valueHex.value = palette[chosenColor] || chosenColor;
+});
+labelPicker.addEventListener('input', () => applyLabelHex(labelPicker.value));
+labelHex.addEventListener('change', () => {
+  if (validHex(labelHex.value)) applyLabelHex(labelHex.value);
+  else labelHex.value = chosenLabelColor;
+});
 function button(label, action, isPrimary = false) {
   const element = document.createElement('button');
   element.type = 'button';
@@ -147,7 +190,7 @@ copyAll.addEventListener('click', () => {
 });
 async function start() {
   try {
-    const response = await fetch(new URL('data/catalog.json', baseUrl), {cache:'no-cache'});
+    const response = await fetch(new URL('api/catalog', baseUrl), {cache:'default'});
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const catalog = await response.json();
     if (!Array.isArray(catalog.mods) || !catalog.mods.length) throw new Error('No mods found');
@@ -161,7 +204,7 @@ async function start() {
     const requested = new URL(window.location.href).searchParams.get('mod');
     chooseMod(mods.find(mod => mod.id === requested) || mods.find(mod => mod.id === 'taskbar-zones') || mods[0]);
   } catch (error) {
-    status.textContent = `Could not load the catalog: ${error.message}. Check the latest GitHub Actions deployment.`;
+    status.textContent = `Could not load the catalog: ${error.message}. Check the Cloudflare Worker deployment.`;
   }
 }
 start();

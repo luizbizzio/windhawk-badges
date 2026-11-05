@@ -1,85 +1,71 @@
 # Windhawk Badges
 
-Generate simple SVG badges for any mod in the public Windhawk catalog.
+A simple badge generator for mods in the public Windhawk catalog. Show users, ratings, version, author, reviews and other details in a GitHub README.
 
-**Website:** https://luizbizzio.github.io/windhawk-badges/
+The code is hosted on GitHub. **Cloudflare Workers serves the public website and creates SVG badges on request.** The repository can remain private.
 
-Windhawk Badges is an independent community project. It is not affiliated with Windhawk.
+This is an independent community project, not affiliated with Windhawk.
 
-## Badges
+## Features
 
-Choose from ten statistics:
+- Ten badges: Users, Rating, Rating votes, Reviews, Version, Author, Updated, Published, License, Architecture.
+- Choose from 12 preset colors or use any six-digit HEX value.
+- Customize the value and label colors separately.
+- Copy Markdown for one badge or all ten badges.
+- Badges update automatically from the public Windhawk catalog, which is cached for up to six hours.
+- No pre-generated SVG library and no API key needed.
 
-- **Users:** users shown in the Windhawk catalog (not downloads)
-- **Rating:** average from one-to-five-star votes
-- **Rating votes:** number of users who rated the mod
-- **Reviews:** written review count
-- **Version:** current mod version
-- **Author:** mod author
-- **Updated:** date of the latest cataloged update
-- **Published:** initial publication date
-- **License:** license specified by the mod, when available
-- **Architecture:** CPU architectures listed by the mod, when available
+## Setup with Cloudflare
 
-Each badge has six hosted colors: blue, green, orange, red, purple, and gray. You can also choose **custom HEX colors** for the value and label, then download an SVG to upload to your own repository.
+1. Create a free Cloudflare account at https://dash.cloudflare.com/.
+2. Open **Workers & Pages**, select **Create application**, and choose **GitHub**.
+3. Authorize the **Cloudflare Workers and Pages** GitHub App. Give access only to `luizbizzio/windhawk-badges` if you prefer.
+4. Select the private repository `luizbizzio/windhawk-badges`, branch `main`.
+5. Set the project/Worker name to **`windhawk-badges`**. It must match `wrangler.jsonc`.
+6. Leave the root directory at `/` (repository root). Set the build command to `npm test` and the deploy command to `npx wrangler deploy`.
+7. Choose **Save and Deploy**. The website and badge API will share the `https://windhawk-badges.<your-subdomain>.workers.dev/` address.
 
-Preset-color badges stay updated automatically. A downloaded custom SVG is **static** and does not update on its own.
+Cloudflare Workers Builds can deploy automatically on each new commit to `main` after you connect the GitHub repository. No domain purchase or paid plan is required for normal free-tier use.
 
-## How to use
+**Important:** the old `luizbizzio.github.io/windhawk-badges` links will not automatically redirect to the new Worker address. Replace badge links in existing READMEs once your Worker is live. GitHub Pages on private repositories also requires an eligible GitHub plan.
 
-1. Open the [badge generator](https://luizbizzio.github.io/windhawk-badges/).
-2. Find your Windhawk mod by name or ID.
-3. Choose a badge type and a color.
-4. Click **Copy Markdown** and paste it into your GitHub `README.md`.
+## Badge links
 
-You can also copy the SVG URL or download the image. For custom HEX colors, use **Download SVG** and upload that file to your own repository.
+Use your Cloudflare Worker domain, for example:
 
-## Direct badge URLs
+`https://windhawk-badges.<your-subdomain>.workers.dev/badges/taskbar-zones/users.svg`
 
-A badge uses this format:
+Select a preset color:
 
-`https://luizbizzio.github.io/windhawk-badges/badges/<mod-id>/<kind>.svg`
+`https://windhawk-badges.<your-subdomain>.workers.dev/badges/taskbar-zones/users/green.svg`
 
-For example:
+Or use your own HEX colors:
 
-`https://luizbizzio.github.io/windhawk-badges/badges/taskbar-zones/users.svg`
+`https://windhawk-badges.<your-subdomain>.workers.dev/badges/taskbar-zones/users.svg?color=ff5733&labelColor=24292f`
 
-For a specific hosted color, use:
+All three versions remain dynamic. The old `/badges/<mod-id>/<kind>.svg` and `/badges/<mod-id>/<kind>/<preset>.svg` routes are supported.
 
-`https://luizbizzio.github.io/windhawk-badges/badges/taskbar-zones/users/green.svg`
+## Data and caching
 
-Supported badge kinds: `users`, `rating`, `votes`, `reviews`, `version`, `author`, `updated`, `published`, `license`, `architecture`.
+- Source: https://mods.windhawk.net/catalogs/en.json.
+- The Worker caches normalized catalog data for up to six hours per Cloudflare data center.
+- Badge responses are cacheable for one hour. GitHub also caches README images, so updates may appear later.
+- `users` means Windhawk catalog users, not file downloads.
+- Ratings are weighted averages from the star breakdown. Missing values show `unknown` or `not specified`.
+- The API endpoint `/api/catalog` provides the normalized data for the site.
 
-Supported hosted colors: `blue`, `green`, `orange`, `red`, `purple`, `gray`.
+## Development
 
-The earlier `<kind>.svg` links remain supported.
-
-## How it works
-
-GitHub Actions downloads the [public Windhawk catalog](https://mods.windhawk.net/catalogs/en.json), generates SVG images for every listed mod, and publishes the site with GitHub Pages. It runs every day and after updates to the `main` branch.
-
-The catalog is the only source for badge values. Missing values are displayed as `unknown` or `not specified`. Scores such as `defaultSorting` and `trendingSorting` are not used as public badges because they are internal sorting metrics.
-
-The value on each SVG reflects the most recent successful deployment. It is not a live counter. Browsers and GitHub can cache images.
-
-## Deploy your own copy
-
-1. Fork the repository.
-2. Open **Settings > Pages** and set **Source** to **GitHub Actions**.
-3. Open **Actions > Build and deploy badges** and select **Run workflow**.
-
-For local development, use Python 3.12+ (no third-party libraries):
+Requires Node.js 20 or newer.
 
 ```bash
-python -m unittest discover -s tests -v
-python scripts/generate.py --catalog-file tests/sample-catalog.json --output dist
-python -m http.server 8000 --directory dist
+npm install
+npm test
+npm run dev
 ```
 
-For a live catalog build, omit `--catalog-file`.
-
-GitHub Pages serves static files, so arbitrary HEX colors cannot be generated at a stable hosted URL on request. Instead, the site offers a local SVG download for custom colors.
+To deploy manually after authenticating Wrangler, use `npm run deploy`. Normally, Cloudflare's Git integration handles deployments.
 
 ## License
 
-MIT. See [LICENSE](LICENSE). Created by [Luiz Bizzio](https://github.com/luizbizzio).
+MIT. See [LICENSE](LICENSE). Created by Luiz Bizzio.
