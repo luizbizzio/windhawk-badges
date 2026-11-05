@@ -15,15 +15,17 @@
   <header class="topbar">
     <div class="topbar-inner">
       <a class="brand" href="./" aria-label="Windhawk Badges home"><span class="brand-mark" aria-hidden="true">W</span><span>Windhawk <span class="brand-muted">Badges</span></span></a>
-      <a class="top-link" href="https://windhawk.net/" target="_blank" rel="noopener noreferrer">Windhawk <span aria-hidden="true">↗</span></a>
+      <nav class="header-links" aria-label="External links">
+        <a class="top-link" href="https://windhawk.net/" target="_blank" rel="noopener noreferrer">Windhawk <span aria-hidden="true">↗</span></a>
+        <a class="star-link" href="https://github.com/luizbizzio/windhawk-badges" target="_blank" rel="noopener noreferrer" aria-label="Star Windhawk Badges on GitHub"><span aria-hidden="true">★</span> Star on GitHub</a>
+      </nav>
     </div>
   </header>
   <main class="main">
     <div class="page-heading">
       <h1>Windhawk Badges</h1>
-      <p>Choose a mod, adjust the style, and copy a badge.</p>
+      <p>Badges for any Windhawk mod. Customize the appearance, then copy the Markdown into your README.</p>
     </div>
-    <div class="workspace">
     <section class="panel configurator" aria-labelledby="configure-title">
       <h2 id="configure-title">Customize</h2>
       <div class="field">
@@ -50,9 +52,10 @@
             <div class="hex-row"><input id="labelPicker" type="color" value="#555555" aria-label="Select label color"><input id="labelHex" type="text" maxlength="7" value="#555555" spellcheck="false" aria-label="Label color HEX"></div>
           </div>
         </div>
+        <p class="field-note">Custom HEX and preset colors stay updated automatically. No downloads or setup needed.</p>
       </div>
       <div class="field appearance-field">
-        <div class="appearance-heading"><span class="field-label">Appearance</span></div>
+        <div class="appearance-heading"><span class="field-label">Appearance</span><span class="appearance-hint">Changes apply to every badge</span></div>
         <div class="appearance-controls">
           <div>
             <label for="badgeStyle">Style</label>
@@ -73,9 +76,9 @@
           </div>
           <div>
             <label for="badgeLabels">Labels</label>
-            <select id="badgeLabels" title="Full: Windhawk users. Short: Users.">
-              <option value="full">Full</option>
-              <option value="short">Short</option>
+            <select id="badgeLabels">
+              <option value="full">Full (Windhawk users)</option>
+              <option value="short">Short (Users)</option>
             </select>
           </div>
         </div>
@@ -83,14 +86,13 @@
     </section>
     <section class="panel output" aria-labelledby="output-title">
       <div class="output-header">
-        <div><h2 id="output-title">Badges</h2></div>
+        <div><h2 id="output-title">Available badges</h2><p>All badges for the selected mod.</p></div>
         <button id="copyAll" class="button button-primary" type="button" disabled>Copy all Markdown</button>
       </div>
       <div id="badgeGrid" class="badge-grid" aria-live="polite"></div>
       <p id="status" class="status" role="status">Loading the Windhawk catalog…</p>
     </section>
-    </div>
-    <p class="source-note">Stats come from the <a href="https://mods.windhawk.net/catalogs/en.json" target="_blank" rel="noopener noreferrer">public Windhawk catalog</a>. Badge data is cached for up to 6 hours. Users are not downloads.</p>
+    <p class="source-note">Data comes from the <a href="https://mods.windhawk.net/catalogs/en.json" target="_blank" rel="noopener noreferrer">public Windhawk catalog</a> and is cached for up to 6 hours. Users are not download counts. Ratings are calculated from star votes.</p>
   </main>
   <footer class="footer"><div><span>Independent community project. Not affiliated with Windhawk.</span><span id="updated">Catalog data pending</span></div></footer>
 </body>
