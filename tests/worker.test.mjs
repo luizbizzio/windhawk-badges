@@ -115,6 +115,7 @@ test('supports five separate visual styles and compact density', () => {
   assert.match(compact, /font-size="10"/);
   assert.match(compact, /rx="9"/);
   assert.throws(() => renderBadge('Users', '10', '#ff5733', '#24292f', { style: 'nope' }));
+  assert.throws(() => renderBadge('Users', '10', '#ff5733', '#24292f', { icon: 'other' }));
 });
 
 test('mod name is a single-part SVG with escaped text', () => {
@@ -140,6 +141,15 @@ test('handles appearance, short labels, and mod badge in dynamic URLs', async ()
     assert.doesNotMatch(svg, /Windhawk users/);
     assert.match(svg, /height="18"/);
     assert.match(svg, /rx="9"/);
+    const decorated = await worker.fetch(new Request('https://example.workers.dev/badges/taskbar-zones/rating.svg?style=pill&icon=windhawk'), {}, context);
+    assert.equal(decorated.status, 200);
+    const decoratedSVG = await decorated.text();
+    assert.match(decoratedSVG, /data-windhawk-icon="true"/);
+    assert.match(decoratedSVG, /4\.8\/5\.0/);
+    assert.doesNotMatch(svg, /data-windhawk-icon/); // default remains unchanged
+    const modWithIcon = await worker.fetch(new Request('https://example.workers.dev/badges/taskbar-zones/mod.svg?icon=windhawk'), {}, context);
+    assert.equal(modWithIcon.status, 200);
+    assert.match(await modWithIcon.text(), /data-windhawk-icon="true"/);
     const mod = await worker.fetch(new Request('https://example.workers.dev/badges/taskbar-zones/mod.svg?style=rounded'), {}, context);
     assert.equal(mod.status, 200);
     const modSVG = await mod.text();
@@ -158,7 +168,7 @@ test('handles appearance, short labels, and mod badge in dynamic URLs', async ()
     assert.doesNotMatch(missingGithubSvg, /undefined/);
     const wrongKind = await worker.fetch(new Request('https://example.workers.dev/badges/taskbar-zones/unknown.svg'), {}, context);
     assert.equal(wrongKind.status, 404);
-    for (const bad of ['style=invalid', 'size=huge', 'labelMode=bad']) {
+    for (const bad of ['style=invalid', 'size=huge', 'labelMode=bad', 'icon=unexpected']) {
       const error = await worker.fetch(new Request(`https://example.workers.dev/badges/taskbar-zones/users.svg?${bad}`), {}, context);
       assert.equal(error.status, 400);
     }
@@ -187,8 +197,13 @@ test('browser preview renderer matches Worker without sending badge requests', (
   for (const style of styles) {
     for (const size of sizes) {
       for (const [label, value, single] of examples) {
-        const args = [label, value, '#ff5733', '#555555', { style, size, single }];
-        assert.equal(renderPreviewBadge(...args), renderBadge(...args));
+        for (const icon of ['none', 'windhawk']) {
+          const args = [label, value, '#ff5733', '#555555', { style, size, single, icon }];
+          assert.equal(renderPreviewBadge(...args), renderBadge(...args));
+          const output = renderPreviewBadge(...args);
+          if (icon === 'windhawk') assert.match(output, /data-windhawk-icon="true"/);
+          else assert.doesNotMatch(output, /data-windhawk-icon/);
+        }
       }
     }
   }
@@ -199,4 +214,7 @@ test('browser preview renderer matches Worker without sending badge requests', (
   assert.match(app, /data:image\/svg\+xml;charset=utf-8/);
   assert.doesNotMatch(app, /preview\.src = (url|badgeUrl\()/);
   assert.match(app, /function badgeUrl\(/); // copied Markdown still uses dynamic Worker links
+  assert.match(html, /id="badgeIcon"/);
+  assert.match(app, /url\.searchParams\.set\('icon', 'windhawk'\)/);
+  assert.match(app, /icon: chosenIcon/);
 });

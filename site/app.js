@@ -19,6 +19,7 @@ const workerBase = /^https:\/\/[^/]+$/i.test(workerSetting) ? workerSetting : nu
 const styleSelect = document.getElementById('badgeStyle');
 const sizeSelect = document.getElementById('badgeSize');
 const labelsSelect = document.getElementById('badgeLabels');
+const iconSelect = document.getElementById('badgeIcon');
 const valueHex = document.getElementById('valueHex');
 const valuePicker = document.getElementById('valuePicker');
 const labelHex = document.getElementById('labelHex');
@@ -32,6 +33,7 @@ let chosenLabelColor = '#555555';
 let chosenStyle = 'classic';
 let chosenSize = 'normal';
 let chosenLabelMode = 'full';
+let chosenIcon = 'none';
 
 function badgeUrl(modId, kind, color) {
   const path = palette[color]
@@ -39,13 +41,14 @@ function badgeUrl(modId, kind, color) {
     : `badges/${encodeURIComponent(modId)}/${encodeURIComponent(kind)}.svg`;
   // Pages has legacy static badges, but all custom appearance features need the Worker.
   if (!workerBase && (kind === 'mod' || !palette[color] || chosenLabelColor !== '#555555' ||
-      chosenStyle !== 'classic' || chosenSize !== 'normal' || chosenLabelMode !== 'full')) return null;
+      chosenStyle !== 'classic' || chosenSize !== 'normal' || chosenLabelMode !== 'full' || chosenIcon !== 'none')) return null;
   const url = new URL(path, workerBase ? workerBase + '/' : baseUrl);
   if (!palette[color]) url.searchParams.set('color', color.replace('#', ''));
   if (chosenLabelColor !== '#555555' && kind !== 'mod') url.searchParams.set('labelColor', chosenLabelColor.slice(1));
   if (chosenStyle !== 'classic') url.searchParams.set('style', chosenStyle);
   if (chosenSize !== 'normal') url.searchParams.set('size', chosenSize);
   if (chosenLabelMode !== 'full' && kind !== 'mod') url.searchParams.set('labelMode', chosenLabelMode);
+  if (chosenIcon === 'windhawk') url.searchParams.set('icon', 'windhawk');
   if (kind === 'github') url.searchParams.set('v', '2');
   return url.href;
 }
@@ -147,11 +150,12 @@ valueHex.addEventListener('change', () => {
   else valueHex.value = palette[chosenColor] || chosenColor;
 });
 labelPicker.addEventListener('input', () => applyLabelHex(labelPicker.value));
-for (const [element, key] of [[styleSelect, 'style'], [sizeSelect, 'size'], [labelsSelect, 'labels']]) {
+for (const [element, key] of [[styleSelect, 'style'], [sizeSelect, 'size'], [labelsSelect, 'labels'], [iconSelect, 'icon']]) {
   element.addEventListener('change', () => {
     if (key === 'style') chosenStyle = styleSelect.value;
     else if (key === 'size') chosenSize = sizeSelect.value;
-    else chosenLabelMode = labelsSelect.value;
+    else if (key === 'labels') chosenLabelMode = labelsSelect.value;
+    else chosenIcon = iconSelect.value;
     renderBadges();
   });
 }
@@ -177,6 +181,7 @@ function previewDataUrl(kind, label) {
     style: chosenStyle,
     size: chosenSize,
     single: kind === 'mod',
+    icon: chosenIcon,
   });
   return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
 }

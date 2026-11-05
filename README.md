@@ -14,6 +14,7 @@ An independent community project, not affiliated with Windhawk.
 
 - 12 badges, including a mod name badge linked to Windhawk and a GitHub badge linked to the address provided in the official catalog.
 - 5 styles: Classic, Flat, Flat square, Rounded and Pill.
+- Optional Windhawk icon before the badge label, including single-part mod name badges. Enabled with `?icon=windhawk` (or `&icon=windhawk` when combined with other options). Off by default.
 - Normal and compact sizes, full and short labels.
 - 10 preset colors and custom six-digit HEX colors for the value and label.
 - Copy the Markdown for a badge or all badges at once.
@@ -33,6 +34,8 @@ A badge showing only the mod's name:
 ```text
 https://windhawk-badges.luizbizzio.workers.dev/badges/taskbar-zones/mod.svg
 ```
+
+The optional Windhawk icon is embedded directly into each SVG using the [official Windhawk logo vector](https://github.com/ramensoftware/windhawk/blob/main/src/windhawk-frontend/apps/windhawk-frontend/src/app/panel/assets/logo-white.svg); there is no additional image request. The Windhawk name and logo belong to their respective owner; this independent service is not affiliated with Windhawk.
 
 The Mod name badge links to `https://windhawk.net/mods/<mod-id>`. The GitHub badge shows the username from `metadata.github` and links to that GitHub profile. If the metadata contains a repository URL, only the owner username is used. If no valid GitHub URL is provided, its Markdown action is disabled.
 

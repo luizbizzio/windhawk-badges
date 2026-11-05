@@ -28,12 +28,12 @@
 .appearance-field{grid-column:1/-1;border-top:1px solid #3b3b3b;padding-top:19px}
 .appearance-heading{display:flex;justify-content:space-between;gap:12px;align-items:baseline}
 .appearance-hint{font-size:12px;color:#929292}
-.appearance-controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.appearance-controls{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}
 .appearance-controls label{font-weight:500;color:#cfcfcf;margin:0 0 6px;font-size:12px}
 .appearance-controls select{width:100%;height:38px;border:1px solid #555;border-radius:4px;background:#181818;color:#f1f1f1;padding:0 10px;cursor:pointer}
 .appearance-controls select:focus-visible{outline:2px solid #77c5ff;outline-offset:2px}
 .custom-unavailable{font-size:12px;color:#aaa;max-width:240px}
-@media(max-width:600px){.appearance-controls{grid-template-columns:1fr}.appearance-field{padding-top:16px}.appearance-hint{display:none}}
+@media(max-width:600px){.appearance-controls{grid-template-columns:repeat(2,minmax(0,1fr))}.appearance-field{padding-top:16px}.appearance-hint{display:none}}
 
 /* GitHub star link: visible without distracting from the badge editor. */
 .header-links{display:flex;align-items:center;gap:16px}
