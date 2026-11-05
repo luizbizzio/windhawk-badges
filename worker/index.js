@@ -4,6 +4,7 @@
 /** Windhawk Badges API, based on the public Windhawk mod catalog. */
 const CATALOG_URL = 'https://mods.windhawk.net/catalogs/en.json';
 const CATALOG_TTL = 6 * 60 * 60;
+const MAX_CATALOG_BYTES = 15_000_000;
 const BADGE_TTL = 60 * 60;
 const BADGE_LABELS = Object.freeze({
   users: 'Windhawk users',
@@ -88,7 +89,8 @@ export function normalizeCatalog(source, generatedAt = new Date().toISOString())
     if (!MOD_ID.test(id) || !item || typeof item !== 'object') continue;
     const metadata = item.metadata || {};
     const details = item.details || {};
-    if (typeof metadata !== 'object' || typeof details !== 'object') continue;
+    if (!metadata || !details || typeof metadata !== 'object' || typeof details !== 'object' ||
+        Array.isArray(metadata) || Array.isArray(details)) continue;
     const rating = averageRating(details);
     const votes = count(details.ratingUsers) ?? (rating === null ? null : details.ratingBreakdown.reduce((a, b) => a + b, 0));
     const architecture = Array.isArray(metadata.architecture) ? metadata.architecture.filter(x => typeof x === 'string').join(', ') : metadata.architecture;
@@ -211,6 +213,36 @@ export function renderBadge(label, rawValue, color = PALETTE.blue, labelColor = 
   return parts.join('\n');
 }
 
+async function readLimitedJson(response) {
+  const contentLength = Number(response.headers.get('content-length'));
+  if (contentLength > MAX_CATALOG_BYTES) throw new Error('Windhawk catalog exceeds size limit');
+  if (!response.body) throw new Error('Windhawk catalog response has no body');
+  const reader = response.body.getReader();
+  const chunks = [];
+  let size = 0;
+  try {
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      size += value.byteLength;
+      if (size > MAX_CATALOG_BYTES) {
+        await reader.cancel();
+        throw new Error('Windhawk catalog exceeds size limit');
+      }
+      chunks.push(value);
+    }
+  } finally {
+    reader.releaseLock();
+  }
+  const bytes = new Uint8Array(size);
+  let offset = 0;
+  for (const part of chunks) {
+    bytes.set(part, offset);
+    offset += part.byteLength;
+  }
+  return JSON.parse(new TextDecoder().decode(bytes));
+}
+
 async function loadCatalog(request, context) {
   // A cache entry holds normalized data, not thousands of pre-rendered SVGs.
   // The cache is regional; on a cold request the Windhawk JSON is fetched once.
@@ -225,7 +257,7 @@ async function loadCatalog(request, context) {
     cf: { cacheTtl: CATALOG_TTL, cacheEverything: true },
   });
   if (!upstream.ok) throw new Error(`Windhawk catalog returned ${upstream.status}`);
-  const raw = await upstream.json();
+  const raw = await readLimitedJson(upstream);
   const catalog = normalizeCatalog(raw);
   if (cache && context?.waitUntil) {
     const response = new Response(JSON.stringify(catalog), {

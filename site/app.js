@@ -71,11 +71,15 @@ function badgeUrl(modId, kind, color) {
   if (kind === 'github') url.searchParams.set('v', '2');
   return url.href;
 }
+function escapeMarkdownAlt(value) {
+  // Mod names from the public catalog may contain Markdown syntax.
+  return String(value).replace(/\\/g, '\\\\').replace(/\[/g, '\\[').replace(/\]/g, '\\]').replace(/\r?\n/g, ' ');
+}
 function markdownFor(kind) {
   const link = badgeUrl(chosenMod.id, kind, chosenColor);
   const alt = kind === 'mod' ? chosenMod.name : kinds[kind];
   const destination = kind === 'github' ? chosenMod.githubUrl : chosenMod.url;
-  return link && destination ? `[![${alt.replaceAll('[', '\[').replaceAll(']', '\]')}](${link})](${destination})` : '';
+  return link && destination ? `[![${escapeMarkdownAlt(alt)}](${link})](${destination})` : '';
 }
 
 function closeResults() {
@@ -321,7 +325,7 @@ document.addEventListener('click', event => {
 });
 copyAll.addEventListener('click', () => {
   if (!chosenMod) return;
-  const all = Object.keys(kinds).map(markdownFor).filter(Boolean).join(' ');
+  const all = Object.keys(kinds).map(markdownFor).filter(Boolean).join('\n');
   if (all) copyText(all, copyAll);
 });
 async function start() {

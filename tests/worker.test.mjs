@@ -262,3 +262,28 @@ test('browser preview renderer matches Worker without sending badge requests', (
     assert.ok(app.includes(`url.searchParams.set('${param}'`));
   }
 });
+
+test('catalog size limit rejects oversized upstream responses', async () => {
+  const savedFetch = globalThis.fetch;
+  const savedCache = globalThis.caches;
+  globalThis.caches = undefined;
+  globalThis.fetch = async () => new Response('{"mods":{}}', {
+    status: 200,
+    headers: { 'Content-Length': '15000001' },
+  });
+  try {
+    const response = await worker.fetch(new Request('https://example.workers.dev/api/catalog'), {}, {});
+    assert.equal(response.status, 503);
+    assert.equal(response.headers.get('Cache-Control'), 'no-store');
+  } finally {
+    globalThis.fetch = savedFetch;
+    globalThis.caches = savedCache;
+  }
+});
+
+test('client Markdown escaping and multi-line copy are preserved', () => {
+  const appSource = readFileSync(new URL('../site/app.js', import.meta.url), 'utf8');
+  assert.match(appSource, /function escapeMarkdownAlt/);
+  assert.match(appSource, /escapeMarkdownAlt\(alt\)/);
+  assert.match(appSource, /\.map\(markdownFor\)\.filter\(Boolean\)\.join\('\\n'\)/);
+});
