@@ -250,8 +250,8 @@ test('browser preview renderer matches Worker without sending badge requests', (
   assert.match(app, /chosenIcon = 'windhawk'/);
   assert.match(html, /value="windhawk" selected/);
   assert.match(html, /id="iconBgHex"[^>]*value="#000000"/);
-  const styles = readFileSync(new URL('../site/style.css', import.meta.url), 'utf8');
-  assert.match(styles, /\.hex-customization\{grid-column:1\/-1;display:grid;grid-template-columns:repeat\(6,minmax\(0,1fr\)\)/);
+  const cssSource = readFileSync(new URL('../site/style.css', import.meta.url), 'utf8');
+  assert.match(cssSource, /\.hex-customization\{grid-column:1\/-1;display:grid;grid-template-columns:repeat\(6,minmax\(0,1fr\)\)/);
   assert.match(app, /let chosenIconBgColor = '#000000'/);
   assert.match(html, /<option value="full">Full<\/option>/);
   assert.match(html, /<option value="short">Short<\/option>/);
