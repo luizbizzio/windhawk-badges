@@ -303,3 +303,17 @@ test('default site example is Windows 11 Taskbar Styler with URL override preser
   assert.match(app, /chooseMod\(mods\.find\(mod => mod\.id === requested\) \|\| mods\.find\(mod => mod\.id === 'windows-11-taskbar-styler'\) \|\| mods\[0\]\)/);
   assert.doesNotMatch(app, /mod\.id === 'taskbar-zones'\) \|\| mods\[0\]/);
 });
+
+test('site uses the official Windhawk logo and accessible footer links', () => {
+  const html = readFileSync(new URL('../site/index.html', import.meta.url), 'utf8');
+  const styles = readFileSync(new URL('../site/style.css', import.meta.url), 'utf8');
+  const logo = readFileSync(new URL('../site/assets/windhawk-logo.svg', import.meta.url), 'utf8');
+  assert.match(html, /class="brand-mark" aria-hidden="true"><img src="\.\/assets\/windhawk-logo\.svg"/);
+  assert.equal(html.includes('brand-mark" aria-hidden="true">W</span>'), false);
+  assert.match(logo, /<svg /);
+  assert.match(logo, /<path fill="#ffffff"/);
+  assert.match(html, /<nav class="footer-links" aria-label="Footer links">/);
+  assert.match(html, /href="https:\/\/github\.com\/luizbizzio\/windhawk-badges\/issues"/);
+  assert.match(html, /id="updated" class="footer-updated"/);
+  assert.match(styles, /\.footer-bottom\{/);
+});

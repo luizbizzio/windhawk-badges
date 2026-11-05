@@ -146,6 +146,8 @@ Please read [SECURITY.md](SECURITY.md) before reporting a security issue. Do not
 
 Copyright © 2026 [Luiz Bizzio](https://github.com/luizbizzio). The project's original code is published under the **[Apache License 2.0](LICENSE)**.
 
-The optional Windhawk icon is based on the [official Windhawk SVG](https://github.com/ramensoftware/windhawk/blob/main/src/windhawk-frontend/apps/windhawk-frontend/src/app/panel/assets/logo-white.svg), from a repository licensed under **GPL-3.0**. The Windhawk logo and name remain the property of their respective owner. The project's Apache license does not itself grant trademark rights or independent permission to relicense the Windhawk logo.
+The optional Windhawk icon uses the [official Windhawk SVG](https://github.com/ramensoftware/windhawk/blob/main/src/windhawk-frontend/apps/windhawk-frontend/src/app/panel/assets/logo-white.svg). Michael from Ramen Software confirmed by email on November 5, 2026, that the logo can be used for these badges. Thanks to the Windhawk team for allowing this.
+
+The original Windhawk repository uses **GPL-3.0**. The logo and Windhawk name remain the property of their respective owner. The project's Apache 2.0 license applies to its original code and does not relicense the Windhawk logo or grant trademark rights.
 
 Windhawk Badges is an unofficial project and is not sponsored, maintained or endorsed by Windhawk.
