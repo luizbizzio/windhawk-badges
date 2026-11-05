@@ -60,11 +60,20 @@ test('validates custom HEX colors and badge paths', () => {
 });
 
 test('renders valid SVG and escapes metadata safely', () => {
-  const svg = renderBadge('Author', '<script>evil</script>', '#ff5733', '#123456');
-  assert.match(svg, /&lt;script&gt;/);
-  assert.doesNotMatch(svg, /<script>/);
-  assert.match(svg, /fill="#ff5733"/);
-  assert.match(svg, /fill="#123456"/);
+  // This checks the actual XML escaping, not an HTML-tag filtering regex.
+  // Cover lowercase, uppercase, mixed case, and attribute quotes.
+  const cases = [
+    ['<script>evil</script>', '&lt;script&gt;evil&lt;/script&gt;'],
+    ['<SCRIPT SRC="bad.js">evil</SCRIPT>', '&lt;SCRIPT SRC=&quot;bad.js&quot;&gt;evil&lt;/SCRIPT&gt;'],
+    ["<ScRiPt data-x='1'>evil</ScRiPt>", '&lt;ScRiPt data-x=&apos;1&apos;&gt;evil&lt;/ScRiPt&gt;'],
+  ];
+  for (const [value, escaped] of cases) {
+    const svg = renderBadge('Author', value, '#ff5733', '#123456');
+    assert.ok(svg.includes(escaped), 'Metadata is XML-escaped');
+    assert.equal(svg.toLowerCase().includes('<script'), false, 'No executable script tag is emitted');
+    assert.match(svg, /fill="#ff5733"/);
+    assert.match(svg, /fill="#123456"/);
+  }
   assert.throws(() => renderBadge('Test', '1', 'javascript:alert(1)'));
 });
 
