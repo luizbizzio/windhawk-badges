@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright 2026 Luiz Bizzio
+# SPDX-License-Identifier: Apache-2.0
 """Build static SVG badges and a compact Windhawk catalog for GitHub Pages."""
 
 from __future__ import annotations

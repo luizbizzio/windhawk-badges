@@ -1,3 +1,6 @@
+// Copyright 2026 Luiz Bizzio
+// SPDX-License-Identifier: Apache-2.0
+
 import { renderPreviewBadge } from './badge-preview.js';
 
 'use strict';

@@ -1,3 +1,6 @@
+// Copyright 2026 Luiz Bizzio
+// SPDX-License-Identifier: Apache-2.0
+
 /** Windhawk Badges API, based on the public Windhawk mod catalog. */
 const CATALOG_URL = 'https://mods.windhawk.net/catalogs/en.json';
 const CATALOG_TTL = 6 * 60 * 60;

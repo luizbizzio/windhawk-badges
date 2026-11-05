@@ -1,3 +1,6 @@
+// Copyright 2026 Luiz Bizzio
+// SPDX-License-Identifier: Apache-2.0
+
 /**
  * Local SVG previews used by GitHub Pages.
  * Keep the renderer in sync with worker/index.js; tests compare exact SVG output.

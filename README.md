@@ -58,6 +58,10 @@ python -m unittest discover -s tests -v
 
 Deploying the Worker uses `npm run deploy`; Cloudflare is already connected to `main` for automatic deployment. GitHub Actions publishes the site.
 
+## Security
+
+See [SECURITY.md](SECURITY.md) to report a security issue privately. Do not publish security details in a GitHub issue.
+
 ## License
 
-MIT. See [LICENSE](LICENSE). Created by [Luiz Bizzio](https://github.com/luizbizzio).
+Apache License 2.0. See [LICENSE](LICENSE). Copyright 2026 [Luiz Bizzio](https://github.com/luizbizzio).
