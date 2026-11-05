@@ -48,6 +48,10 @@ class GeneratorTests(unittest.TestCase):
             self.assertEqual(mod["values"]["license"], "GPL-3.0")
             self.assertEqual(len(BADGE_NAMES), 10)
             self.assertEqual(manifest["palette"]["blue"], "#2563eb")
+            self.assertEqual(len(PALETTE), 12)
+            self.assertEqual(len(list((out / "badges/taskbar-zones").rglob("*.svg"))), len(BADGE_NAMES) * (len(PALETTE) + 1))
+            self.assertEqual(len(list(out.rglob("*.svg"))), 3 * len(BADGE_NAMES) * (len(PALETTE) + 1))
+            self.assertIn('fill="#24292f"', (out / "badges/taskbar-zones/users/black.svg").read_text())
 
     def test_reject_invalid_catalog(self):
         with self.assertRaises(ValueError):

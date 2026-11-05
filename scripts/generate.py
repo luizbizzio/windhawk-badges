@@ -35,6 +35,12 @@ PALETTE = {
     "red": "#c62828",
     "purple": "#7c3aed",
     "gray": "#626b77",
+    "cyan": "#0e7490",
+    "teal": "#0f766e",
+    "yellow": "#a16207",
+    "pink": "#be185d",
+    "indigo": "#4338ca",
+    "black": "#24292f",
 }
 DEFAULT_COLOR = "blue"
 LABEL_COLOR = "#555555"
@@ -42,7 +48,7 @@ LABEL_COLOR = "#555555"
 
 def download_catalog(url: str = CATALOG_URL) -> dict:
     request = Request(url, headers={
-        "User-Agent": "windhawk-badges/1.1 (open-source catalog badge generator)",
+        "User-Agent": "windhawk-badges/1.2 (open-source catalog badge generator)",
         "Accept": "application/json",
     })
     with urlopen(request, timeout=45) as response:

@@ -3,64 +3,54 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Create simple badges for any Windhawk mod, with data from the public Windhawk catalog.">
-  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="Create automatically updated badges for any Windhawk mod. Choose from 12 colors and copy the Markdown to your README.">
+  <meta name="theme-color" content="#202020">
+  <meta name="color-scheme" content="dark">
   <title>Windhawk Badges</title>
   <link rel="stylesheet" href="./style.css">
   <script src="./app.js" defer></script>
 </head>
 <body>
-  <div class="page">
-    <header class="header">
-      <a class="brand" href="./">Windhawk <span>Badges</span></a>
-      <a href="https://github.com/luizbizzio/windhawk-badges" target="_blank" rel="noopener noreferrer">GitHub</a>
-    </header>
-    <main>
-      <h1>Badges for Windhawk mods</h1>
-      <p class="intro">Pick a mod, a statistic, and a color. Copy the badge into your README.</p>
-      <section class="panel" aria-label="Badge generator">
-        <div class="field">
-          <label for="search">Mod</label>
-          <input id="search" type="search" placeholder="Search by name or ID" autocomplete="off" aria-controls="results" aria-expanded="false">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="./" aria-label="Windhawk Badges home"><span class="brand-mark" aria-hidden="true">W</span><span>Windhawk <span class="brand-muted">Badges</span></span></a>
+      <a class="top-link" href="https://github.com/luizbizzio/windhawk-badges" target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a>
+    </div>
+  </header>
+  <main class="main">
+    <div class="page-heading">
+      <h1>Windhawk Badges</h1>
+      <p>Badges for any Windhawk mod. Choose a color and copy the Markdown into your README.</p>
+    </div>
+    <section class="panel configurator" aria-labelledby="configure-title">
+      <h2 id="configure-title">Customize</h2>
+      <div class="field">
+        <label for="search">Windhawk mod</label>
+        <div class="search-wrap">
+          <input id="search" type="search" placeholder="Search by mod name or ID" autocomplete="off" aria-controls="results" aria-expanded="false" aria-autocomplete="list">
           <div id="results" class="results" role="listbox" aria-label="Matching mods" hidden></div>
-          <p id="modInfo" class="hint" aria-live="polite">Loading the catalog…</p>
         </div>
-        <div class="field">
-          <label for="kind">Badge</label>
-          <select id="kind" aria-label="Badge type" disabled></select>
+        <div id="selectedMod" class="selected-mod" hidden>
+          <div class="selected-details"><strong id="selectedName"></strong><span id="selectedId"></span></div>
+          <a id="modLink" target="_blank" rel="noopener noreferrer">View mod ↗</a>
         </div>
-        <fieldset class="field color-field">
-          <legend>Color</legend>
-          <div id="colors" class="colors" role="group" aria-label="Preset badge colors"></div>
-          <label class="custom-toggle"><input type="checkbox" id="customToggle"> Custom HEX colors</label>
-          <div id="customColors" class="custom-colors" hidden>
-            <label>Value color <input type="color" id="valueColor" value="#2563eb"></label>
-            <label>Label color <input type="color" id="labelColor" value="#555555"></label>
-            <p class="hint">Custom HEX badges are downloaded as SVG files. Only preset colors have automatically updated URLs.</p>
-          </div>
-        </fieldset>
-        <div class="preview-area">
-          <div class="preview-title">Preview</div>
-          <div class="preview"><img id="badgePreview" alt="Selected badge preview" hidden></div>
-          <label for="markdown">Markdown</label>
-          <textarea id="markdown" rows="3" readonly spellcheck="false" placeholder="Choose a mod to generate a badge"></textarea>
-          <div class="actions">
-            <button type="button" id="copyMarkdown" class="primary" disabled>Copy Markdown</button>
-            <button type="button" id="copyUrl" disabled>Copy URL</button>
-            <button type="button" id="downloadSvg" disabled>Download SVG</button>
-          </div>
-        </div>
-      </section>
-      <p id="status" class="status" role="status"></p>
-      <section class="about">
-        <h2>How it works</h2>
-        <p>Badges are generated daily from the <a href="https://mods.windhawk.net/catalogs/en.json" target="_blank" rel="noopener noreferrer">Windhawk catalog</a> and hosted on GitHub Pages. Preset-color badges update automatically. User counts are not download counts, and ratings are calculated from the catalog's star votes.</p>
-      </section>
-    </main>
-    <footer>
-      <span>Independent community project. Not affiliated with Windhawk.</span>
-      <span id="updated"></span>
-    </footer>
-  </div>
+      </div>
+      <div class="field color-field">
+        <div class="color-header"><span class="field-label" id="color-label">Badge color</span><span id="colorName" class="color-name">Blue</span></div>
+        <div id="colors" class="swatches" role="group" aria-labelledby="color-label"></div>
+        <p class="field-note">All 12 colors update automatically when the Windhawk catalog changes.</p>
+      </div>
+    </section>
+    <section class="panel output" aria-labelledby="output-title">
+      <div class="output-header">
+        <div><h2 id="output-title">Available badges</h2><p>All badges for the selected mod.</p></div>
+        <button id="copyAll" class="button button-primary" type="button" disabled>Copy all Markdown</button>
+      </div>
+      <div id="badgeGrid" class="badge-grid" aria-live="polite"></div>
+      <p id="status" class="status" role="status">Loading the Windhawk catalog…</p>
+    </section>
+    <p class="source-note">Data comes from the <a href="https://mods.windhawk.net/catalogs/en.json" target="_blank" rel="noopener noreferrer">public Windhawk catalog</a> and is refreshed daily. Users are not download counts. Ratings are calculated from star votes.</p>
+  </main>
+  <footer class="footer"><div><span>Independent community project. Not affiliated with Windhawk.</span><span id="updated">Catalog data pending</span></div></footer>
 </body>
 </html>
