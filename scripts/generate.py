@@ -36,12 +36,12 @@ PALETTE = {
     "purple": "#7c3aed",
     "gray": "#626b77",
     "cyan": "#0e7490",
-    "teal": "#0f766e",
     "yellow": "#a16207",
     "pink": "#be185d",
-    "indigo": "#4338ca",
     "black": "#24292f",
 }
+# Older links remain valid, but these two colors are not shown in the editor.
+LEGACY_PALETTE = {"teal": "#0f766e", "indigo": "#4338ca"}
 DEFAULT_COLOR = "blue"
 LABEL_COLOR = "#555555"
 
@@ -176,7 +176,7 @@ def build(catalog: dict, output: Path, site_source: Path) -> int:
             (mod_path / f"{kind}.svg").write_text(render_badge(label, value, PALETTE[DEFAULT_COLOR]), encoding="utf-8")
             color_dir = mod_path / kind
             color_dir.mkdir(exist_ok=True)
-            for color_name, color in PALETTE.items():
+            for color_name, color in {**PALETTE, **LEGACY_PALETTE}.items():
                 (color_dir / f"{color_name}.svg").write_text(render_badge(label, value, color), encoding="utf-8")
     data_dir = output / "data"
     data_dir.mkdir(exist_ok=True)
@@ -206,7 +206,7 @@ def main() -> int:
     except (OSError, ValueError, TypeError, json.JSONDecodeError) as exc:
         print(f"Generation failed: {exc}", file=sys.stderr)
         return 1
-    print(f"Generated {count} mods and {count * len(BADGE_NAMES) * (1 + len(PALETTE)):,} SVG badges")
+    print(f"Generated {count} mods and {count * len(BADGE_NAMES) * (1 + len(PALETTE) + len(LEGACY_PALETTE)):,} SVG badges")
     return 0
 
 

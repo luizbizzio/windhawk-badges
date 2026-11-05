@@ -237,7 +237,7 @@ async function start() {
     kinds = { ...catalog.kinds, mod: 'Mod name' }; 
     palette = catalog.palette;
     chosenColor = catalog.defaultColor || 'blue';
-    if (!palette[chosenColor] || Object.keys(palette).length !== 12) throw new Error('Invalid palette');
+    if (!palette[chosenColor] || Object.keys(palette).length !== 10) throw new Error('Invalid palette');
     renderColors();
     document.getElementById('updated').textContent = `${mods.length.toLocaleString()} mods · Updated ${new Date(catalog.generatedAt).toLocaleDateString()}`;
     const requested = new URL(window.location.href).searchParams.get('mod');

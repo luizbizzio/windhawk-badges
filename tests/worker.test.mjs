@@ -26,10 +26,15 @@ test('normalizes all supported statistics', () => {
   assert.equal(mod.values.license, 'GPL-3.0');
   assert.equal(mod.values.published, '2026-04-13');
   assert.equal(normalized.kinds.users, 'Windhawk users');
+  assert.equal(Object.keys(normalized.palette).length, 10);
+  assert.equal(normalized.palette.indigo, undefined);
+  assert.equal(normalized.palette.teal, undefined);
 });
 
 test('validates custom HEX colors and badge paths', () => {
   assert.equal(resolveColor('blue'), '#2563eb');
+  assert.equal(resolveColor('indigo'), '#4338ca'); // legacy links
+  assert.equal(resolveColor('teal'), '#0f766e'); // legacy links
   assert.equal(resolveColor('ff5733'), '#ff5733');
   assert.equal(resolveColor('#AbCdEf'), '#abcdef');
   assert.equal(resolveColor('red<script>'), null);

@@ -23,9 +23,11 @@ const SIZES = new Set(['normal', 'compact']);
 const LABEL_MODES = new Set(['full', 'short']);
 const PALETTE = Object.freeze({
   blue: '#2563eb', green: '#238636', orange: '#b45309', red: '#c62828',
-  purple: '#7c3aed', gray: '#626b77', cyan: '#0e7490', teal: '#0f766e',
-  yellow: '#a16207', pink: '#be185d', indigo: '#4338ca', black: '#24292f',
+  purple: '#7c3aed', gray: '#626b77', cyan: '#0e7490',
+  yellow: '#a16207', pink: '#be185d', black: '#24292f',
 });
+// Old named color URLs stay valid, but are no longer offered as presets.
+const LEGACY_COLORS = Object.freeze({ teal: '#0f766e', indigo: '#4338ca' });
 const HEX = /^#?[a-fA-F0-9]{6}$/;
 const MOD_ID = /^[a-z0-9][a-z0-9-]{0,95}$/;
 const DEFAULT_LABEL_COLOR = '#555555';
@@ -101,7 +103,7 @@ function hexColor(value) {
 }
 export function resolveColor(value, fallback = null) {
   if (typeof value !== 'string' || value.length > 30) return fallback;
-  return PALETTE[value.toLowerCase()] || hexColor(value) || fallback;
+  return PALETTE[value.toLowerCase()] || LEGACY_COLORS[value.toLowerCase()] || hexColor(value) || fallback;
 }
 export function parseBadgePath(pathname) {
   const match = /^\/badges\/([a-z0-9][a-z0-9-]{0,95})\/([a-z]+)(?:\/([a-z0-9-]+))?\.svg$/.exec(pathname);

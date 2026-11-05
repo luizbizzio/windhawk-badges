@@ -2,3 +2,10 @@ __pycache__/
 *.pyc
 .venv/
 dist/
+node_modules/
+.wrangler/
+.env
+.env.*
+!.env.example
+.dev.vars*
+.DS_Store
