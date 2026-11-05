@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import worker, { normalizeCatalog, resolveColor, renderBadge, parseBadgePath, githubLink } from '../worker/index.js';
+import { renderPreviewBadge } from '../site/badge-preview.js';
+import { readFileSync } from 'node:fs';
 
 const catalog = {
   mods: {
@@ -169,4 +171,30 @@ test('handles appearance, short labels, and mod badge in dynamic URLs', async ()
     globalThis.fetch = savedFetch;
     globalThis.caches = savedCache;
   }
+});
+
+test('browser preview renderer matches Worker without sending badge requests', () => {
+  const styles = ['classic', 'flat', 'flat-square', 'rounded', 'pill'];
+  const sizes = ['normal', 'compact'];
+  const examples = [
+    ['Windhawk users', '10,123', false],
+    ['Users', '10,123', false],
+    ['GitHub', 'luizbizzio', false],
+    ['Mod name', 'Archive & <Preview> "β" 🚀', true],
+  ];
+  for (const style of styles) {
+    for (const size of sizes) {
+      for (const [label, value, single] of examples) {
+        const args = [label, value, '#ff5733', '#555555', { style, size, single }];
+        assert.equal(renderPreviewBadge(...args), renderBadge(...args));
+      }
+    }
+  }
+  const html = readFileSync(new URL('../site/index.html', import.meta.url), 'utf8');
+  const app = readFileSync(new URL('../site/app.js', import.meta.url), 'utf8');
+  assert.match(html, /type="module" src="\.\/app\.js"/);
+  assert.match(app, /preview\.src = previewDataUrl\(kind, label\)/);
+  assert.match(app, /data:image\/svg\+xml;charset=utf-8/);
+  assert.doesNotMatch(app, /preview\.src = (url|badgeUrl\()/);
+  assert.match(app, /function badgeUrl\(/); // copied Markdown still uses dynamic Worker links
 });

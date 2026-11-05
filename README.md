@@ -14,6 +14,7 @@ An independent community project, not affiliated with Windhawk.
 - 10 preset colors and custom six-digit HEX colors for the value and label.
 - Copy the Markdown for a badge or all badges at once.
 - Dynamic statistics sourced from Windhawk, with caching.
+- Badge previews render locally in the browser. Searching mods and changing colors, sizes or styles does not invoke Cloudflare Workers.
 
 ## Example
 
@@ -34,7 +35,8 @@ The Mod name badge links to `https://windhawk.net/mods/<mod-id>`. The GitHub bad
 ## Hosting
 
 - **GitHub Pages** hosts the website and its catalog search data, updated daily by `.github/workflows/deploy.yml`.
-- **Cloudflare Workers** generates dynamic SVGs. The catalog is cached for up to six hours; SVG responses are cacheable for one hour. GitHub can cache README images longer.
+- **Cloudflare Workers** generates dynamic SVGs for embedded badge URLs, not for the editor's previews. The catalog is cached for up to six hours; SVG responses are cacheable for one hour. GitHub can cache README images longer.
+- The site's preview data comes from the GitHub Pages catalog (updated daily), so an editor preview may briefly show older statistics than the Worker badge.
 - Older badge URLs and named preset colors (including `teal` and `indigo`) still work, but only ten presets appear in the editor.
 
 ## Development

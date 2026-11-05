@@ -1,3 +1,5 @@
+import { renderPreviewBadge } from './badge-preview.js';
+
 'use strict';
 
 const search = document.getElementById('search');
@@ -162,6 +164,20 @@ function button(label, action, isPrimary = false) {
   element.addEventListener('click', () => copyText(action(), element));
   return element;
 }
+function previewDataUrl(kind, label) {
+  // Use the already-downloaded GitHub Pages catalog, never the Worker, for previews.
+  const shownLabel = chosenLabelMode === 'short'
+    ? ({ users: 'Users', rating: 'Rating', votes: 'Votes' }[kind] || label)
+    : label;
+  const shownValue = kind === 'mod' ? chosenMod.name : (chosenMod.values?.[kind] ?? 'not specified');
+  const svg = renderPreviewBadge(shownLabel, shownValue, palette[chosenColor] || chosenColor, chosenLabelColor, {
+    style: chosenStyle,
+    size: chosenSize,
+    single: kind === 'mod',
+  });
+  return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+}
+
 function renderBadges() {
   badgeGrid.replaceChildren();
   if (!chosenMod) return;
@@ -179,7 +195,7 @@ function renderBadges() {
     const url = badgeUrl(chosenMod.id, kind, chosenColor);
     preview.alt = kind === 'mod' ? chosenMod.name : `${label}: ${chosenMod.values?.[kind] ?? 'not specified'}`;
     preview.loading = 'lazy';
-    if (url) preview.src = url;
+    if (url) preview.src = previewDataUrl(kind, label);
     const actions = document.createElement('div');
     actions.className = 'badge-actions';
     const md = button('Markdown', () => markdownFor(kind), true);
