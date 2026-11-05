@@ -17,7 +17,8 @@ class GeneratorTests(unittest.TestCase):
 
     def test_rating_uses_star_breakdown(self):
         label, rating = rating_from_details({"rating": 10, "ratingBreakdown": [0, 0, 1, 0, 9]})
-        self.assertEqual((label, rating), ("4.8/5", 4.8))
+        self.assertEqual((label, rating), ("4.8/5.0", 4.8))
+        self.assertEqual(rating_from_details({"ratingBreakdown": [0, 0, 0, 0, 2]}), ("5.0/5.0", 5.0))
         self.assertEqual(rating_from_details({"ratingBreakdown": [0] * 5}), ("not rated", None))
 
     def test_all_badges_valid_xml_and_escaped(self):

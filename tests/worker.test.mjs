@@ -21,7 +21,9 @@ test('normalizes all supported statistics', () => {
   const normalized = normalizeCatalog(catalog, '2026-11-05T10:00:00Z');
   const mod = normalized.mods.find(x => x.id === 'taskbar-zones');
   assert.equal(mod.values.users, '150');
-  assert.equal(mod.values.rating, '4.8/5');
+  assert.equal(mod.values.rating, '4.8/5.0');
+  const perfect = normalizeCatalog({ mods: { perfect: { metadata: { name: 'Perfect' }, details: { ratingBreakdown: [0, 0, 0, 0, 2] } } } });
+  assert.equal(perfect.mods[0].values.rating, '5.0/5.0');
   assert.equal(mod.values.votes, '10');
   assert.equal(mod.values.reviews, '4');
   assert.equal(mod.values.version, '1.0.0');

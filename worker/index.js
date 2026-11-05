@@ -93,7 +93,7 @@ export function normalizeCatalog(source, generatedAt = new Date().toISOString())
       values: {
         mod: text(metadata.name, id, 140),
         users: formatNumber(count(details.users)),
-        rating: rating === null ? 'not rated' : `${rating.toFixed(1)}/5`,
+        rating: rating === null ? 'not rated' : `${rating.toFixed(1)}/5.0`,
         votes: formatNumber(votes),
         reviews: formatNumber(count(details.reviews)),
         version: text(metadata.version, 'unknown', 40),

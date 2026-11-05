@@ -78,7 +78,7 @@ def rating_from_details(details: dict) -> tuple[str, float | None]:
     if not total:
         return "not rated", None
     mean = sum(stars * count for stars, count in enumerate(breakdown, 1)) / total
-    return f"{mean:.1f}/5", round(mean, 4)
+    return f"{mean:.1f}/5.0", round(mean, 4)
 
 
 def as_date(value: object) -> str:
