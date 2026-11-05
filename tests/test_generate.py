@@ -61,7 +61,10 @@ class GeneratorTests(unittest.TestCase):
             self.assertTrue((out / "badges/taskbar-zones/users/teal.svg").exists())
             self.assertTrue((out / "badges/taskbar-zones/users/indigo.svg").exists())
             self.assertEqual(len(list((out / "badges/taskbar-zones").rglob("*.svg"))), len(BADGE_NAMES) * (len(PALETTE) + len(LEGACY_PALETTE) + 1))
-            self.assertEqual(len(list(out.rglob("*.svg"))), 3 * len(BADGE_NAMES) * (len(PALETTE) + len(LEGACY_PALETTE) + 1))
+            # Count generated badges, not static SVG assets such as the site logo.
+            self.assertEqual(len(list((out / "badges").rglob("*.svg"))), 3 * len(BADGE_NAMES) * (len(PALETTE) + len(LEGACY_PALETTE) + 1))
+            self.assertTrue((out / "assets/windhawk-logo.svg").exists())
+            ElementTree.parse(out / "assets/windhawk-logo.svg")
             self.assertIn('fill="#24292f"', (out / "badges/taskbar-zones/users/black.svg").read_text())
 
     def test_site_seo_metadata_and_sitemap(self):
