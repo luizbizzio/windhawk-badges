@@ -354,8 +354,9 @@ test('Windhawk-style layout places project links above catalog status on the rig
   const html = readFileSync(new URL('../site/index.html', import.meta.url), 'utf8');
   const styles = readFileSync(new URL('../site/style.css', import.meta.url), 'utf8');
   assert.doesNotMatch(html, /<header class="topbar">/);
+  assert.match(html, /<title>Windhawk Badges<\/title>/);
   assert.match(html, /class="page-heading-meta"[\s\S]*?<nav class="page-links"[\s\S]*?Windhawk[\s\S]*?GitHub[\s\S]*?id="catalogSummary"/);
-  assert.match(styles, /\\.page-heading-meta\\s*\\{display:flex;flex-direction:column;align-items:flex-end;align-self:flex-end;gap:7px/);
+  assert.match(styles, /\.page-heading-meta\s*\{display:flex;flex-direction:column;align-items:flex-end;align-self:flex-end;gap:7px/);
   assert.match(html, /<h1>Windhawk Badges<\/h1>/);
   for (const id of ['search', 'colors', 'badgeGrid', 'copyAll', 'badgeIcon', 'updated']) {
     assert.ok(html.includes('id="' + id + '"'));
