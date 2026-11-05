@@ -1,84 +1,85 @@
 # Windhawk Badges
 
-Free badges for **all mods in the public Windhawk catalog**. Add user counts, ratings, versions, or licenses to your GitHub README.
+Generate simple SVG badges for any mod in the public Windhawk catalog.
 
-**This project is independent and is not affiliated with Windhawk.**
+**Website:** https://luizbizzio.github.io/windhawk-badges/
 
-## Features
+Windhawk Badges is an independent community project. It is not affiliated with Windhawk.
 
-- Four badges: **Users**, **Rating**, **Version**, and **License**.
-- Works for every mod in the public Windhawk catalog. No manual registration.
-- A public website where anyone can find a mod and copy a badge.
-- Uses **GitHub Actions and GitHub Pages**. No server or API key is needed.
-- Refreshes from the official Windhawk catalog once per day.
-- Uses SVG files, which work in GitHub READMEs.
+## Badges
 
-## Deployment
+Choose from ten statistics:
 
-This repository uses GitHub Actions to publish a static website on GitHub Pages.
+- **Users:** users shown in the Windhawk catalog (not downloads)
+- **Rating:** average from one-to-five-star votes
+- **Rating votes:** number of users who rated the mod
+- **Reviews:** written review count
+- **Version:** current mod version
+- **Author:** mod author
+- **Updated:** date of the latest cataloged update
+- **Published:** initial publication date
+- **License:** license specified by the mod, when available
+- **Architecture:** CPU architectures listed by the mod, when available
 
-1. In the repository, open **Settings > Pages** and set **Build and deployment > Source** to **GitHub Actions**.
-2. Open **Actions > Build and deploy badges** and run the workflow on `main` if a deployment has not already succeeded.
-3. After a successful deployment, open [Windhawk Badges](https://luizbizzio.github.io/windhawk-badges/).
+Each badge has six hosted colors: blue, green, orange, red, purple, and gray. You can also choose **custom HEX colors** for the value and label, then download an SVG to upload to your own repository.
 
-The workflow also runs after commits to `main` and on a daily schedule. If the workflow fails because Pages is not enabled yet, set the Pages source and run it again.
+Preset-color badges stay updated automatically. A downloaded custom SVG is **static** and does not update on its own.
 
 ## How to use
 
-1. Open the public badge website.
-2. Search for a Windhawk mod by name or ID.
-3. Click **Copy Markdown** next to the badge you want.
-4. Paste the Markdown in your own GitHub `README.md`.
+1. Open the [badge generator](https://luizbizzio.github.io/windhawk-badges/).
+2. Find your Windhawk mod by name or ID.
+3. Choose a badge type and a color.
+4. Click **Copy Markdown** and paste it into your GitHub `README.md`.
 
-Example URL after the site is published:
+You can also copy the SVG URL or download the image. For custom HEX colors, use **Download SVG** and upload that file to your own repository.
+
+## Direct badge URLs
+
+A badge uses this format:
+
+`https://luizbizzio.github.io/windhawk-badges/badges/<mod-id>/<kind>.svg`
+
+For example:
 
 `https://luizbizzio.github.io/windhawk-badges/badges/taskbar-zones/users.svg`
 
-Other names are `rating.svg`, `version.svg`, and `license.svg`.
+For a specific hosted color, use:
+
+`https://luizbizzio.github.io/windhawk-badges/badges/taskbar-zones/users/green.svg`
+
+Supported badge kinds: `users`, `rating`, `votes`, `reviews`, `version`, `author`, `updated`, `published`, `license`, `architecture`.
+
+Supported hosted colors: `blue`, `green`, `orange`, `red`, `purple`, `gray`.
+
+The earlier `<kind>.svg` links remain supported.
 
 ## How it works
 
-The workflow in `.github/workflows/deploy.yml`:
+GitHub Actions downloads the [public Windhawk catalog](https://mods.windhawk.net/catalogs/en.json), generates SVG images for every listed mod, and publishes the site with GitHub Pages. It runs every day and after updates to the `main` branch.
 
-1. Downloads `https://mods.windhawk.net/catalogs/en.json`.
-2. Runs tests and generates SVG images with `scripts/generate.py`.
-3. Publishes the `dist/` folder as a GitHub Pages website.
+The catalog is the only source for badge values. Missing values are displayed as `unknown` or `not specified`. Scores such as `defaultSorting` and `trendingSorting` are not used as public badges because they are internal sorting metrics.
 
-The workflow runs on a push to `main`, once a day, or when you run it manually. GitHub may delay scheduled workflows. Public repos may also have inactive schedules disabled after 60 days of no activity.
+The value on each SVG reflects the most recent successful deployment. It is not a live counter. Browsers and GitHub can cache images.
 
-The official catalog may not change every day. Users and ratings are catalog values, not live downloads. Ratings come from the weighted average of the catalog's one-to-five-star votes. Mods with no votes display **not rated**. Missing licenses display **not specified**.
+## Deploy your own copy
 
-## Development and tests
+1. Fork the repository.
+2. Open **Settings > Pages** and set **Source** to **GitHub Actions**.
+3. Open **Actions > Build and deploy badges** and select **Run workflow**.
 
-Python 3.12 or newer is recommended. No packages are required.
+For local development, use Python 3.12+ (no third-party libraries):
 
 ```bash
 python -m unittest discover -s tests -v
-python scripts/generate.py --output dist
-```
-
-To generate an offline demo without downloading the official catalog:
-
-```bash
 python scripts/generate.py --catalog-file tests/sample-catalog.json --output dist
-```
-
-To preview the generated site locally:
-
-```bash
 python -m http.server 8000 --directory dist
 ```
 
-Then open `http://localhost:8000`.
+For a live catalog build, omit `--catalog-file`.
 
-## Limitations
-
-- The data is refreshed daily, not in real time.
-- GitHub and browser image caching can delay badge updates.
-- If the source catalog is unavailable, the workflow fails and GitHub Pages keeps the previous successful deployment.
-- The site provides badges only for mods already listed in the public catalog.
-- Windhawk is a trademark of its respective owner. This is an independent community tool.
+GitHub Pages serves static files, so arbitrary HEX colors cannot be generated at a stable hosted URL on request. Instead, the site offers a local SVG download for custom colors.
 
 ## License
 
-Made by **Luiz Bizzio**. Released under the **MIT License**. See [LICENSE](LICENSE).
+MIT. See [LICENSE](LICENSE). Created by [Luiz Bizzio](https://github.com/luizbizzio).
