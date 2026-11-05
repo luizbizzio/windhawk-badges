@@ -4,6 +4,10 @@ Badges for mods from the public [Windhawk catalog](https://mods.windhawk.net/cat
 
 **Website:** https://luizbizzio.github.io/windhawk-badges/
 
+Generate a badge for your mod, select a style and color, then copy the Markdown into your README. Badge previews are created in your browser; the published badge URLs use Cloudflare Workers.
+
+[Open the badge generator](https://luizbizzio.github.io/windhawk-badges/)
+
 An independent community project, not affiliated with Windhawk.
 
 ## Features
@@ -31,6 +35,10 @@ https://windhawk-badges.luizbizzio.workers.dev/badges/taskbar-zones/mod.svg
 ```
 
 The Mod name badge links to `https://windhawk.net/mods/<mod-id>`. The GitHub badge shows the username from `metadata.github` and links to that GitHub profile. If the metadata contains a repository URL, only the owner username is used. If no valid GitHub URL is provided, its Markdown action is disabled.
+
+## Search and sharing
+
+The website has a canonical URL, social-sharing metadata, a sitemap and structured WebApplication data. The homepage is the only HTML page intended for search indexing.
 
 ## Hosting
 

@@ -29,8 +29,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Test Worker
-        run: node --test tests/worker.test.mjs
+      - name: Test Worker and frontend syntax
+        run: |
+          node --test tests/worker.test.mjs
+          node --check site/app.js
+          node --check site/badge-preview.js
       - name: Set up Python
         uses: actions/setup-python@v5
         with:

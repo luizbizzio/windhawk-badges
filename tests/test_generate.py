@@ -39,6 +39,7 @@ class GeneratorTests(unittest.TestCase):
             out = Path(temp) / "dist"
             self.assertEqual(build(self.catalog, out, ROOT / "site"), 3)
             self.assertTrue((out / "index.html").exists())
+            self.assertTrue((out / "sitemap.xml").exists())
             self.assertTrue((out / ".nojekyll").exists())
             self.assertTrue((out / "badges/taskbar-zones/users.svg").exists())
             self.assertTrue((out / "badges/taskbar-zones/users/red.svg").exists())
@@ -61,6 +62,21 @@ class GeneratorTests(unittest.TestCase):
             self.assertEqual(len(list((out / "badges/taskbar-zones").rglob("*.svg"))), len(BADGE_NAMES) * (len(PALETTE) + len(LEGACY_PALETTE) + 1))
             self.assertEqual(len(list(out.rglob("*.svg"))), 3 * len(BADGE_NAMES) * (len(PALETTE) + len(LEGACY_PALETTE) + 1))
             self.assertIn('fill="#24292f"', (out / "badges/taskbar-zones/users/black.svg").read_text())
+
+    def test_site_seo_metadata_and_sitemap(self):
+        index = (ROOT / "site" / "index.html").read_text(encoding="utf-8")
+        canonical = "https://luizbizzio.github.io/windhawk-badges/"
+        self.assertIn(f'<link rel="canonical" href="{canonical}">', index)
+        self.assertIn('property="og:title"', index)
+        self.assertIn('property="og:description"', index)
+        self.assertIn('name="twitter:card"', index)
+        self.assertNotIn('content="noindex"', index)
+        self.assertIn('type="application/ld+json"', index)
+        # The generator must publish an actual sitemap for this subpath.
+        sitemap = ElementTree.parse(ROOT / "site" / "sitemap.xml")
+        urls = [element.text for element in sitemap.iter()
+                if element.tag.endswith("loc")]
+        self.assertEqual(urls, [canonical])
 
     def test_reject_invalid_catalog(self):
         with self.assertRaises(ValueError):
