@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Free, open-source badges for all Windhawk mods. Powered by the public Windhawk catalog and GitHub Pages.">
+  <meta name="theme-color" content="#0c1423">
+  <title>Windhawk Badges</title>
+  <link rel="stylesheet" href="./style.css">
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <div class="site-shell">
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="Windhawk Badges home"><span class="brand-mark">W</span> Windhawk <span class="brand-light">Badges</span></a>
+      <a class="repo-link" href="https://github.com/luizbizzio/windhawk-badges" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="main-title">
+        <div class="eyebrow"><span class="eyebrow-dot"></span> FREE AND OPEN SOURCE</div>
+        <h1 id="main-title">Simple badges for<br><span>Windhawk mods.</span></h1>
+        <p class="intro">Show users, ratings, version, and license in any GitHub README. No account, API key, or setup needed.</p>
+        <div class="hero-meta"><span class="meta-icon">↻</span> Updated daily from the public Windhawk catalog <span class="meta-divider">·</span> <span id="modCount">Loading mods…</span></div>
+      </section>
+
+      <section class="builder" aria-labelledby="builder-title">
+        <div class="section-heading"><div><p class="section-kicker">BADGE GENERATOR</p><h2 id="builder-title">Pick a mod</h2></div><span class="section-number">01 / 02</span></div>
+        <label for="search" class="input-label">Search by name or mod ID</label>
+        <div class="search-box"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="e.g. taskbar-zones" autocomplete="off" aria-controls="results" aria-expanded="false"></div>
+        <div id="results" class="results" role="listbox" aria-label="Matching Windhawk mods" hidden></div>
+        <p id="status" class="status" role="status">Loading the Windhawk catalog…</p>
+        <div id="selected" class="selected" hidden><div><span class="selected-kicker">SELECTED MOD</span><strong id="selectedName"></strong><span id="selectedId" class="selected-id"></span></div><a id="windhawkLink" target="_blank" rel="noopener noreferrer">View on Windhawk ↗</a></div>
+      </section>
+
+      <section class="badges-section" aria-labelledby="badges-title">
+        <div class="section-heading"><div><p class="section-kicker">READY TO USE</p><h2 id="badges-title">Copy a badge</h2></div><span class="section-number">02 / 02</span></div>
+        <p class="section-desc">Copy the Markdown and paste it into your README.md. These images update when the catalog updates.</p>
+        <div id="badgeGrid" class="badge-grid" aria-live="polite"></div>
+      </section>
+
+      <section class="how-it-works"><div><p class="section-kicker">HOW IT WORKS</p><h2>Built on GitHub.<br>No server required.</h2></div><div class="steps"><p><strong>01</strong> GitHub Actions reads the official Windhawk catalog each day.</p><p><strong>02</strong> It generates a separate SVG for every mod and badge.</p><p><strong>03</strong> GitHub Pages hosts those SVGs for anyone to use.</p></div></section>
+    </main>
+    <footer><span>Windhawk Badges is an independent community project, not affiliated with Windhawk.</span><span id="updated">Catalog update: pending</span></footer>
+  </div>
+</body>
+</html>
