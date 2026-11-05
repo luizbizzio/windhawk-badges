@@ -6,7 +6,7 @@ import unittest
 from xml.etree import ElementTree
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
-from generate import BADGE_NAMES, PALETTE, LEGACY_PALETTE, badges_for, build, normalize_mods, rating_from_details
+from generate import BADGE_NAMES, PALETTE, build, normalize_mods, rating_from_details
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -21,19 +21,13 @@ class GeneratorTests(unittest.TestCase):
         self.assertEqual(rating_from_details({"ratingBreakdown": [0, 0, 0, 0, 2]}), ("5.0/5.0", 5.0))
         self.assertEqual(rating_from_details({"ratingBreakdown": [0] * 5}), ("not rated", None))
 
-    def test_all_badges_valid_xml_and_escaped(self):
+    def test_catalog_normalization_preserves_data_without_emitting_svg_files(self):
         mods = normalize_mods(self.catalog)
         self.assertEqual(len(mods), 3)
         injected = next(mod for mod in mods if mod["id"] == "test-injection")
-        for color_name in PALETTE:
-            badges = badges_for(injected, color_name)
-            self.assertEqual(set(badges), set(BADGE_NAMES))
-            for text in badges.values():
-                ElementTree.fromstring(text)
-            self.assertIn("&lt;script&gt;", badges["license"])
-            self.assertNotIn("<script>", badges["license"])
-            self.assertEqual(injected["values"]["github"], "not specified")
-            self.assertIsNone(injected["githubUrl"])
+        self.assertEqual(injected["values"]["github"], "not specified")
+        self.assertIsNone(injected["githubUrl"])
+        self.assertIn("<script>", injected["values"]["license"])
 
     def test_complete_build_and_compatibility(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -42,11 +36,12 @@ class GeneratorTests(unittest.TestCase):
             self.assertTrue((out / "index.html").exists())
             self.assertTrue((out / "sitemap.xml").exists())
             self.assertTrue((out / ".nojekyll").exists())
-            self.assertTrue((out / "badges/taskbar-zones/users.svg").exists())
+            self.assertFalse((out / "badges").exists(), "Site must not generate static badge files")
             self.assertTrue((out / "assets/favicon.svg").exists())
+            self.assertTrue((out / "assets/windhawk-logo.svg").exists())
             ElementTree.parse(out / "assets/favicon.svg")
-            self.assertTrue((out / "badges/taskbar-zones/users/red.svg").exists())
-            self.assertTrue((out / "badges/recycle-bin-file-preview/author/green.svg").exists())
+            ElementTree.parse(out / "assets/windhawk-logo.svg")
+            self.assertEqual(len(list(out.rglob("*.svg"))), 2)
             manifest = json.loads((out / "data/catalog.json").read_text(encoding="utf-8"))
             mod = next(mod for mod in manifest["mods"] if mod["id"] == "taskbar-zones")
             self.assertEqual(mod["values"]["users"], "0")
@@ -54,24 +49,16 @@ class GeneratorTests(unittest.TestCase):
             self.assertEqual(mod["values"]["license"], "GPL-3.0")
             self.assertEqual(mod["values"]["github"], "luizbizzio")
             self.assertEqual(mod["githubUrl"], "https://github.com/luizbizzio")
-            self.assertTrue((out / "badges/taskbar-zones/github.svg").exists())
             self.assertEqual(len(BADGE_NAMES), 11)
-            self.assertEqual(manifest["palette"]["blue"], "#2563eb")
+            self.assertEqual(len(manifest["kinds"]), 11)
             self.assertEqual(len(PALETTE), 10)
+            self.assertEqual(manifest["defaultColor"], "blue")
             self.assertNotIn("teal", manifest["palette"])
             self.assertNotIn("indigo", manifest["palette"])
-            self.assertTrue((out / "badges/taskbar-zones/users/teal.svg").exists())
-            self.assertTrue((out / "badges/taskbar-zones/users/indigo.svg").exists())
-            self.assertEqual(len(list((out / "badges/taskbar-zones").rglob("*.svg"))), len(BADGE_NAMES) * (len(PALETTE) + len(LEGACY_PALETTE) + 1))
-            # Count generated badges, not static SVG assets such as the site logo.
-            self.assertEqual(len(list((out / "badges").rglob("*.svg"))), 3 * len(BADGE_NAMES) * (len(PALETTE) + len(LEGACY_PALETTE) + 1))
-            self.assertTrue((out / "assets/windhawk-logo.svg").exists())
-            ElementTree.parse(out / "assets/windhawk-logo.svg")
-            self.assertIn('fill="#24292f"', (out / "badges/taskbar-zones/users/black.svg").read_text())
 
     def test_site_seo_metadata_and_sitemap(self):
         index = (ROOT / "site" / "index.html").read_text(encoding="utf-8")
-        canonical = "https://luizbizzio.github.io/windhawk-badges/"
+        canonical = "https://windhawk-badges.luizbizzio.com/"
         self.assertIn(f'<link rel="canonical" href="{canonical}">', index)
         self.assertIn('property="og:title"', index)
         self.assertIn('property="og:description"', index)

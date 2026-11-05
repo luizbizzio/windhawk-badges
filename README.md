@@ -8,7 +8,7 @@
 
 Create live SVG badges, choose your colors and style, and copy ready-to-use Markdown for your GitHub README.
 
-**[Open the Badge Generator](https://luizbizzio.github.io/windhawk-badges/)**
+**[Open the Badge Generator](https://windhawk-badges.luizbizzio.com/)**
 
 [![GitHub Pages](https://github.com/luizbizzio/windhawk-badges/actions/workflows/deploy.yml/badge.svg)](https://github.com/luizbizzio/windhawk-badges/actions/workflows/deploy.yml)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
@@ -23,7 +23,7 @@ Windhawk Badges is a free, independent community tool. It is **not affiliated wi
 
 ## Get started
 
-1. Open the **[website](https://luizbizzio.github.io/windhawk-badges/)**.
+1. Open the **[website](https://windhawk-badges.luizbizzio.com/)**.
 2. Find your mod by name or ID.
 3. Choose the style, colors, labels and icon.
 4. Select **Markdown** or **URL** for a badge, or choose **Copy all Markdown**.
@@ -40,7 +40,7 @@ Your previews are made **in your browser**. Searching mods or changing the setti
 - **10 preset colors** and custom HEX colors for each part of a badge.
 - **Optional Windhawk icon** with its own background and icon color.
 - **Ready-to-copy Markdown** with links to the mod page or GitHub profile.
-- **Legacy URL support** for older badges and color presets.
+- **Legacy Worker URL support** for older badge paths and color presets.
 
 ### Badge types
 
@@ -106,15 +106,25 @@ Replace `taskbar-zones` with any valid Windhawk mod ID. You can also use named-c
 
 | Part | Purpose |
 | --- | --- |
-| GitHub Pages | Hosts the editor and its search catalog |
+| GitHub Pages | Hosts the editor, favicon and search catalog (no pre-generated badges) |
 | Local SVG renderer | Builds previews in your browser without Worker requests |
 | Cloudflare Worker | Serves live badge SVG URLs used in READMEs |
 | GitHub Actions | Runs tests and publishes the website |
 | Dependabot | Checks dependencies and GitHub Actions for updates |
 
-The website catalog updates daily. The Worker caches the upstream catalog for up to six hours, and its SVG responses are cacheable for one hour. GitHub may cache README images for longer. This means a preview and an embedded badge can briefly show different values.
+The website catalog updates daily without creating separate SVG files for each mod.  The Worker caches the upstream catalog for up to six hours, and its SVG responses are cacheable for one hour. GitHub may cache README images for longer. This means a preview and an embedded badge can briefly show different values.
 
-Existing static badge links are kept for compatibility.
+The website does **not** generate or host static badge SVGs. All copied badge URLs point to the Cloudflare Worker. Existing Worker badge URLs and legacy color presets keep working. Old URLs hosted directly on GitHub Pages under `/badges/` are no longer served.
+
+## Custom domain
+
+The website uses **https://windhawk-badges.luizbizzio.com/** as its canonical address. To activate it:
+
+1. Open GitHub repository **Settings → Pages → Custom domain** and enter `windhawk-badges.luizbizzio.com`.
+2. At your DNS provider, create a `CNAME` record with name `windhawk-badges` pointing to `luizbizzio.github.io`.
+3. Wait for GitHub's DNS check, then enable **Enforce HTTPS**.
+
+Because this project publishes with GitHub Actions, it does not need a `CNAME` file. DNS and the GitHub Pages custom domain setting must both be configured before the new address works. The Cloudflare Worker endpoint remains unchanged.
 
 ## Development
 

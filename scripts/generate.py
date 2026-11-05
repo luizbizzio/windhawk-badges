@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 # Copyright 2026 Luiz Bizzio
 # SPDX-License-Identifier: Apache-2.0
-"""Build static SVG badges and a compact Windhawk catalog for GitHub Pages."""
+"""Build a compact Windhawk mod catalog and static site for GitHub Pages."""
 
 from __future__ import annotations
 
 import argparse
 from datetime import datetime, timezone
-from html import escape
 import json
 from pathlib import Path
 import re
@@ -44,15 +43,12 @@ PALETTE = {
     "pink": "#be185d",
     "black": "#24292f",
 }
-# Older links remain valid, but these two colors are not shown in the editor.
-LEGACY_PALETTE = {"teal": "#0f766e", "indigo": "#4338ca"}
 DEFAULT_COLOR = "blue"
-LABEL_COLOR = "#555555"
 
 
 def download_catalog(url: str = CATALOG_URL) -> dict:
     request = Request(url, headers={
-        "User-Agent": "windhawk-badges/1.2 (open-source catalog badge generator)",
+        "User-Agent": "windhawk-badges/1.0 (open-source Windhawk catalog viewer)",
         "Accept": "application/json",
     })
     with urlopen(request, timeout=45) as response:
@@ -162,53 +158,11 @@ def normalize_mods(catalog: dict) -> list[dict]:
     return sorted(normalized, key=lambda mod: mod["id"])
 
 
-def text_width(value: str) -> int:
-    return int(sum(7.9 if c in "MW@%" else 6.6 if c.isupper() else 6.3 if c.isdigit() else 5.8 if c in "ilI .,:!|" else 6.6 for c in value) + 1)
-
-
-def render_badge(label: str, value: str, color: str, label_color: str = LABEL_COLOR) -> str:
-    # Limit labels and values to prevent exceptionally wide or oversized SVGs.
-    label, value = label[:60], value[:52]
-    left_width = max(45, text_width(label) + 22)
-    right_width = max(38, text_width(value) + 22)
-    width = left_width + right_width
-    title = escape(f"{label}: {value}", quote=True)
-    return (
-        f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="22" '
-        f'viewBox="0 0 {width} 22" role="img" aria-label="{title}">\n'
-        f'  <title>{title}</title>\n'
-        f'  <rect width="{width}" height="22" rx="3" fill="{label_color}"/>\n'
-        f'  <path d="M{left_width} 0h{right_width}v22h-{right_width}z" fill="{color}"/>\n'
-        '  <g fill="#ffffff" font-family="Verdana,DejaVu Sans,sans-serif" font-size="11" text-anchor="middle">\n'
-        f'    <text x="{left_width / 2:g}" y="15">{escape(label, quote=True)}</text>\n'
-        f'    <text x="{left_width + right_width / 2:g}" y="15">{escape(value, quote=True)}</text>\n'
-        '  </g>\n'
-        '</svg>\n'
-    )
-
-
-def badges_for(mod: dict, color_name: str = DEFAULT_COLOR) -> dict[str, str]:
-    color = PALETTE[color_name]
-    return {kind: render_badge(label, mod["values"][kind], color) for kind, label in BADGE_LABELS.items()}
-
-
 def build(catalog: dict, output: Path, site_source: Path) -> int:
     mods = normalize_mods(catalog)
     if output.exists():
         shutil.rmtree(output)
     shutil.copytree(site_source, output)
-    badge_root = output / "badges"
-    for mod in mods:
-        mod_path = badge_root / mod["id"]
-        mod_path.mkdir(parents=True, exist_ok=True)
-        for kind, label in BADGE_LABELS.items():
-            value = mod["values"][kind]
-            # Keep original URLs stable; additional color variants live in subfolders.
-            (mod_path / f"{kind}.svg").write_text(render_badge(label, value, PALETTE[DEFAULT_COLOR]), encoding="utf-8")
-            color_dir = mod_path / kind
-            color_dir.mkdir(exist_ok=True)
-            for color_name, color in {**PALETTE, **LEGACY_PALETTE}.items():
-                (color_dir / f"{color_name}.svg").write_text(render_badge(label, value, color), encoding="utf-8")
     data_dir = output / "data"
     data_dir.mkdir(exist_ok=True)
     data = {
@@ -237,7 +191,7 @@ def main() -> int:
     except (OSError, ValueError, TypeError, json.JSONDecodeError) as exc:
         print(f"Generation failed: {exc}", file=sys.stderr)
         return 1
-    print(f"Generated {count} mods and {count * len(BADGE_NAMES) * (1 + len(PALETTE) + len(LEGACY_PALETTE)):,} SVG badges")
+    print(f"Generated catalog for {count:,} mods (no static badge SVG files)")
     return 0
 
 

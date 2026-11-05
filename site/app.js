@@ -51,11 +51,9 @@ function badgeUrl(modId, kind, color) {
   const path = palette[color]
     ? `badges/${encodeURIComponent(modId)}/${encodeURIComponent(kind)}/${encodeURIComponent(color)}.svg`
     : `badges/${encodeURIComponent(modId)}/${encodeURIComponent(kind)}.svg`;
-  // Pages has legacy static badges, but all custom appearance features need the Worker.
-  if (!workerBase && (kind === 'mod' || !palette[color] || chosenLabelColor !== '#555555' ||
-      chosenStyle !== 'classic' || chosenSize !== 'normal' || chosenLabelMode !== 'full' || chosenIcon !== 'none' ||
-      chosenLabelTextColor !== '#ffffff' || chosenValueTextColor !== '#ffffff')) return null;
-  const url = new URL(path, workerBase ? workerBase + '/' : baseUrl);
+  // GitHub Pages hosts only the editor and catalog. Badge SVGs are served by the Worker.
+  if (!workerBase) return null;
+  const url = new URL(path, workerBase + '/');
   if (!palette[color]) url.searchParams.set('color', color.replace('#', ''));
   if (chosenLabelColor !== '#555555' && kind !== 'mod') url.searchParams.set('labelColor', chosenLabelColor.slice(1));
   if (chosenStyle !== 'classic') url.searchParams.set('style', chosenStyle);

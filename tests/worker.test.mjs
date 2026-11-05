@@ -362,3 +362,14 @@ test('Windhawk-style layout places project links above catalog status on the rig
     assert.ok(html.includes('id="' + id + '"'));
   }
 });
+
+test('GitHub Pages is metadata-only, and Worker serves all badge URLs', () => {
+  const app = readFileSync(new URL('../site/app.js', import.meta.url), 'utf8');
+  const html = readFileSync(new URL('../site/index.html', import.meta.url), 'utf8');
+  const readme = readFileSync(new URL('../README.md', import.meta.url), 'utf8');
+  assert.match(app, /if \(!workerBase\) return null;/);
+  assert.match(app, /new URL\(path, workerBase \+ '\/'\)/);
+  assert.doesNotMatch(app, /workerBase \? workerBase/);
+  assert.match(html, /rel="canonical" href="https:\/\/windhawk-badges\.luizbizzio\.com\//);
+  assert.match(readme, /does \*\*not\*\* generate or host static badge SVGs/);
+});
