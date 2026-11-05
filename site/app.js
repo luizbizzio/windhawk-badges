@@ -345,10 +345,13 @@ async function start() {
     iconSelect.value = chosenIcon;
     if (!palette[chosenColor] || Object.keys(palette).length !== 10) throw new Error('Invalid palette');
     renderColors();
-    document.getElementById('updated').textContent = `${mods.length.toLocaleString()} mods · Updated ${new Date(catalog.generatedAt).toLocaleDateString()}`;
+    const catalogStatus = `${mods.length.toLocaleString()} mods · Updated ${new Date(catalog.generatedAt).toLocaleDateString()}`;
+    document.getElementById('catalogSummary').textContent = catalogStatus;
+    document.getElementById('updated').textContent = catalogStatus;
     const requested = new URL(window.location.href).searchParams.get('mod');
     chooseMod(mods.find(mod => mod.id === requested) || mods.find(mod => mod.id === 'windows-11-taskbar-styler') || mods[0]);
   } catch (error) {
+    document.getElementById('catalogSummary').textContent = 'Catalog unavailable';
     status.textContent = `Could not load the catalog: ${error.message}. Check the GitHub Pages deployment.`;
   }
 }

@@ -333,3 +333,19 @@ test('site header and favicon use the official Windhawk SVG', () => {
   assert.match(html, /class="star-symbol"/);
   assert.match(css, /@media\(max-width:440px\)/);
 });
+
+test('catalog summary is visible at the top and shares the footer data', () => {
+  const html = readFileSync(new URL('../site/index.html', import.meta.url), 'utf8');
+  const css = readFileSync(new URL('../site/style.css', import.meta.url), 'utf8');
+  const app = readFileSync(new URL('../site/app.js', import.meta.url), 'utf8');
+  const readme = readFileSync(new URL('../README.md', import.meta.url), 'utf8');
+  assert.match(html, /id="catalogSummary" class="catalog-summary"/);
+  assert.match(app, /const catalogStatus =/);
+  assert.match(app, /getElementById\('catalogSummary'\)\.textContent = catalogStatus/);
+  assert.match(app, /getElementById\('updated'\)\.textContent = catalogStatus/);
+  assert.match(css, /\.catalog-summary\{/);
+  assert.match(css, /\.page-heading\{display:flex/);
+  assert.match(html, /class="footer-brand"/);
+  assert.match(html, /class="footer-brand"[\s\S]*?src="\.\/assets\/windhawk-logo\.svg"/);
+  assert.match(readme, /<div align="center">\s*<img src="site\/assets\/favicon\.svg" alt="Windhawk Badges logo"/);
+});

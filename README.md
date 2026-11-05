@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="site/assets/favicon.svg" alt="Windhawk Badges logo" width="76" height="76">
+
 # Windhawk Badges
 
 **Custom badges for your Windhawk mods.**
