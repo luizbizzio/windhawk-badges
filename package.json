@@ -3,7 +3,7 @@
   "version": "1.3.0",
   "private": true,
   "type": "module",
-  "description": "Dynamic Windhawk mod badges with a Cloudflare Worker",
+  "description": "Dynamic SVG badge API for a GitHub Pages frontend",
   "scripts": {
     "test": "node --test tests/worker.test.mjs",
     "deploy": "wrangler deploy",

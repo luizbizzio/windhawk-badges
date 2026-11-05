@@ -9,6 +9,10 @@ const copyAll = document.getElementById('copyAll');
 const status = document.getElementById('status');
 const selectedMod = document.getElementById('selectedMod');
 const baseUrl = new URL('./', window.location.href);
+// Set in config.js after the Cloudflare Worker is deployed.
+// Until then, preset badges use the existing GitHub Pages SVGs.
+const workerSetting = (window.WINDHAWK_BADGES_WORKER_URL || '').trim().replace(/\/+$/, '');
+const workerBase = /^https:\/\/[^/]+$/i.test(workerSetting) ? workerSetting : null;
 const valueHex = document.getElementById('valueHex');
 const valuePicker = document.getElementById('valuePicker');
 const labelHex = document.getElementById('labelHex');
@@ -24,14 +28,15 @@ function badgeUrl(modId, kind, color) {
   const path = palette[color]
     ? `badges/${encodeURIComponent(modId)}/${encodeURIComponent(kind)}/${encodeURIComponent(color)}.svg`
     : `badges/${encodeURIComponent(modId)}/${encodeURIComponent(kind)}.svg`;
-  const url = new URL(path, baseUrl);
+  if (!workerBase && (!palette[color] || chosenLabelColor !== '#555555')) return null;
+  const url = new URL(path, workerBase ? workerBase + '/' : baseUrl);
   if (!palette[color]) url.searchParams.set('color', color.replace('#', ''));
   if (chosenLabelColor !== '#555555') url.searchParams.set('labelColor', chosenLabelColor.slice(1));
   return url.href;
 }
 function markdownFor(kind) {
   const link = badgeUrl(chosenMod.id, kind, chosenColor);
-  return `[![${kinds[kind]}](${link})](${chosenMod.url})`;
+  return link ? `[![${kinds[kind]}](${link})](${chosenMod.url})` : '';
 }
 function closeResults() {
   results.hidden = true;
@@ -149,18 +154,30 @@ function renderBadges() {
     row.className = 'badge-row';
     const preview = document.createElement('img');
     preview.className = 'badge-image';
-    preview.src = badgeUrl(chosenMod.id, kind, chosenColor);
+    const url = badgeUrl(chosenMod.id, kind, chosenColor);
     preview.alt = `${label}: ${chosenMod.values[kind] ?? 'unknown'}`;
     preview.loading = 'lazy';
+    if (url) preview.src = url;
     const actions = document.createElement('div');
     actions.className = 'badge-actions';
-    actions.append(button('Markdown', () => markdownFor(kind), true), button('URL', () => badgeUrl(chosenMod.id, kind, chosenColor)));
-    row.append(preview, actions);
+    const md = button('Markdown', () => markdownFor(kind), true);
+    const urlButton = button('URL', () => badgeUrl(chosenMod.id, kind, chosenColor));
+    md.disabled = !url;
+    urlButton.disabled = !url;
+    actions.append(md, urlButton);
+    if (url) {
+      row.append(preview, actions);
+    } else {
+      const help = document.createElement('span');
+      help.className = 'custom-unavailable';
+      help.textContent = 'Custom HEX needs the Cloudflare Worker URL.';
+      row.append(help, actions);
+    }
     card.append(heading, row);
     badgeGrid.append(card);
   }
-  copyAll.disabled = false;
-  status.textContent = '';
+  copyAll.disabled = !badgeUrl(chosenMod.id, Object.keys(kinds)[0], chosenColor);
+  status.textContent = copyAll.disabled ? 'Custom HEX badges will work after the Worker URL is configured.' : '';
 }
 async function copyText(value, element) {
   try {
@@ -185,12 +202,12 @@ document.addEventListener('click', event => {
 });
 copyAll.addEventListener('click', () => {
   if (!chosenMod) return;
-  const all = Object.keys(kinds).map(markdownFor).join(' ');
-  copyText(all, copyAll);
+  const all = Object.keys(kinds).map(markdownFor).filter(Boolean).join(' ');
+  if (all) copyText(all, copyAll);
 });
 async function start() {
   try {
-    const response = await fetch(new URL('api/catalog', baseUrl), {cache:'default'});
+    const response = await fetch(new URL('data/catalog.json', baseUrl), {cache:'default'});
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const catalog = await response.json();
     if (!Array.isArray(catalog.mods) || !catalog.mods.length) throw new Error('No mods found');
@@ -204,7 +221,7 @@ async function start() {
     const requested = new URL(window.location.href).searchParams.get('mod');
     chooseMod(mods.find(mod => mod.id === requested) || mods.find(mod => mod.id === 'taskbar-zones') || mods[0]);
   } catch (error) {
-    status.textContent = `Could not load the catalog: ${error.message}. Check the Cloudflare Worker deployment.`;
+    status.textContent = `Could not load the catalog: ${error.message}. Check the GitHub Pages deployment.`;
   }
 }
 start();

@@ -3,9 +3,5 @@
   "name": "windhawk-badges",
   "main": "./worker/index.js",
   "compatibility_date": "2026-11-05",
-  "workers_dev": true,
-  "assets": {
-    "directory": "./site",
-    "run_worker_first": ["/api/*", "/badges/*"]
-  }
+  "workers_dev": true
 }
