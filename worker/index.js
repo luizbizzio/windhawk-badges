@@ -153,12 +153,13 @@ export function renderBadge(label, rawValue, color = PALETTE.blue, labelColor = 
   const size = options.size ?? 'normal';
   const single = options.single === true;
   const icon = options.icon ?? 'none';
-  const iconBgColor = options.iconBgColor ?? (single ? color : labelColor);
+  const iconBgColor = options.iconBgColor ?? '#000000';
+  const iconColor = options.iconColor ?? '#ffffff';
   const labelTextColor = options.labelTextColor ?? '#ffffff';
   const valueTextColor = options.valueTextColor ?? '#ffffff';
   if (!ICONS.has(icon)) throw new Error('Invalid badge icon');
   if (!STYLES.has(style) || !SIZES.has(size)) throw new Error('Invalid appearance');
-  if (![color, labelColor, iconBgColor, labelTextColor, valueTextColor].every(hexColor)) {
+  if (![color, labelColor, iconBgColor, iconColor, labelTextColor, valueTextColor].every(hexColor)) {
     throw new Error('Invalid badge color');
   }
 
@@ -199,7 +200,7 @@ export function renderBadge(label, rawValue, color = PALETTE.blue, labelColor = 
   if (icon === 'windhawk') {
     const iconX = (iconWidth - iconSize) / 2;
     const iconY = (height - iconSize) / 2;
-    parts.push(`  <g data-windhawk-icon="true" transform="translate(${iconX} ${iconY}) scale(${iconSize / 750})"><path fill="#ffffff" d="${WINDHAWK_LOGO_PATH}"/></g>`);
+    parts.push(`  <g data-windhawk-icon="true" transform="translate(${iconX} ${iconY}) scale(${iconSize / 750})"><path fill="${iconColor}" d="${WINDHAWK_LOGO_PATH}"/></g>`);
   }
   parts.push(`  <g font-family="Verdana,DejaVu Sans,sans-serif" font-size="${fontSize}" text-anchor="middle">`);
   if (!single) {
@@ -254,6 +255,7 @@ export default {
     const labelMode = url.searchParams.get('labelMode') ?? 'full';
     const icon = url.searchParams.get('icon') ?? 'none';
     const iconBgInput = url.searchParams.get('iconBgColor');
+    const iconColorInput = url.searchParams.get('iconColor');
     const labelTextInput = url.searchParams.get('labelTextColor');
     const valueTextInput = url.searchParams.get('valueTextColor');
     if (info && (!STYLES.has(style) || !SIZES.has(size) || !LABEL_MODES.has(labelMode) || !ICONS.has(icon))) {
@@ -262,9 +264,10 @@ export default {
     const color = info ? resolveColor(colorInput ?? info.preset) : null;
     const labelColor = info ? resolveColor(labelInput ?? DEFAULT_LABEL_COLOR) : null;
     const iconBgColor = info && iconBgInput !== null ? resolveColor(iconBgInput) : null;
+    const iconColor = info ? resolveColor(iconColorInput ?? 'ffffff') : null;
     const labelTextColor = info ? resolveColor(labelTextInput ?? 'ffffff') : null;
     const valueTextColor = info ? resolveColor(valueTextInput ?? 'ffffff') : null;
-    if (info && (!color || !labelColor || (iconBgInput !== null && !iconBgColor) || !labelTextColor || !valueTextColor)) {
+    if (info && (!color || !labelColor || (iconBgInput !== null && !iconBgColor) || !iconColor || !labelTextColor || !valueTextColor)) {
       return errorResponse(400, 'Invalid color. Use a named preset or six-digit HEX.');
     }
     try {
@@ -282,7 +285,7 @@ export default {
       if (!mod) return errorResponse(404, 'Mod not found in public Windhawk catalog');
       const label = labelMode === 'short' ? (SHORT_LABELS[info.kind] || BADGE_LABELS[info.kind]) : BADGE_LABELS[info.kind];
       const value = info.kind === 'mod' ? mod.name : (mod.values?.[info.kind] ?? 'not specified');
-      const svg = renderBadge(label, value, color, labelColor, { style, size, single: info.kind === 'mod', icon, ...(iconBgColor ? { iconBgColor } : {}), labelTextColor, valueTextColor });
+      const svg = renderBadge(label, value, color, labelColor, { style, size, single: info.kind === 'mod', icon, ...(iconBgColor ? { iconBgColor } : {}), iconColor, labelTextColor, valueTextColor });
       return new Response(request.method === 'HEAD' ? null : svg, {
         headers: {
           'Content-Type': 'image/svg+xml; charset=utf-8',

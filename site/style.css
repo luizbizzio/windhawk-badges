@@ -4,7 +4,7 @@
 .brand{font-size:17px;font-weight:600;color:#f4f4f4;display:flex;gap:10px;align-items:center}.brand:hover{text-decoration:none}.brand-mark{width:28px;height:28px;display:inline-grid;place-items:center;border-radius:5px;background:#2799ec;color:#fff;font-size:18px;font-weight:700}.brand-muted{font-weight:400;color:#c2c2c2}.top-link{color:#b8b8b8;font-size:13px}
 .main{max-width:1050px;margin:auto;padding:42px 26px 60px}.page-heading h1{font-size:27px;line-height:1.2;font-weight:600;margin:0 0 8px;letter-spacing:-.4px}.page-heading p{color:#b9b9b9;margin:0 0 30px;font-size:14px}
 .panel{background:#252525;border:1px solid #3b3b3b;border-radius:6px;padding:24px;margin-bottom:20px}.panel h2{font-weight:600;font-size:17px;margin:0 0 20px}
-.configurator{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:34px}.configurator h2{grid-column:1/-1;margin-bottom:0}.field label,.field-label{font-weight:600;font-size:13px;display:block;margin-bottom:9px;color:#e4e4e4}.search-wrap{position:relative}
+.configurator{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);column-gap:28px;row-gap:22px}.configurator h2{grid-column:1/-1;margin-bottom:0}.field label,.field-label{font-weight:600;font-size:13px;display:block;margin-bottom:9px;color:#e4e4e4}.search-wrap{position:relative}
 #search{width:100%;height:42px;padding:0 13px;border-radius:4px;border:1px solid #555;background:#181818;color:#f1f1f1;outline:0}#search:focus{border-color:#5eb5ff;box-shadow:0 0 0 1px #5eb5ff}#search::placeholder{color:#868686}
 .results{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#2b2b2b;border:1px solid #595959;border-radius:4px;max-height:266px;overflow:auto;z-index:10;box-shadow:0 10px 25px #0008}.result-item{display:flex;width:100%;align-items:center;justify-content:space-between;gap:14px;text-align:left;border:0;border-bottom:1px solid #383838;background:none;color:#eee;padding:9px 12px;min-height:44px}.result-item:hover,.result-item:focus-visible{background:#3a3a3a;outline:0}.result-item span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.result-item small{font-size:11px;color:#a0a0a0;white-space:nowrap}.empty-search{color:#b4b4b4;padding:13px}
 .selected-mod{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;font-size:12px}.selected-details{min-width:0;display:flex;flex-direction:column;gap:2px}.selected-details strong{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.selected-details span{color:#aaa;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.selected-mod a{white-space:nowrap}
@@ -16,14 +16,15 @@
 @media(max-width:440px){.badge-row{flex-wrap:wrap}.badge-actions{margin-left:0;width:100%}.swatches{max-width:none}}
 
 /* HEX controls match the existing Windhawk-inspired dark UI. */
-.hex-customization{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:18px}
+.hex-customization{grid-column:1/-1;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-top:0}
 .hex-item label{display:block;font-weight:500;color:#cfcfcf;margin:0 0 6px;font-size:12px}
-.hex-row{display:flex;gap:8px;align-items:center}
-.hex-row input[type=color]{width:36px;height:34px;cursor:pointer;border:1px solid #666;background:#181818;border-radius:4px;padding:3px;flex-shrink:0}
-.hex-row input[type=text]{width:100%;min-width:0;height:34px;font:12px Consolas,monospace;border:1px solid #555;background:#181818;border-radius:4px;color:#eee;padding:6px 9px}
+.hex-row{display:flex;gap:6px;align-items:center;min-width:0}
+.hex-row input[type=color]{width:30px;height:30px;cursor:pointer;border:1px solid #666;background:#181818;border-radius:4px;padding:3px;flex-shrink:0}
+.hex-row input[type=text]{width:100%;min-width:0;height:30px;font:11px Consolas,monospace;border:1px solid #555;background:#181818;border-radius:4px;color:#eee;padding:5px 6px}
 .hex-row input[type=text]:focus{outline:1px solid #5eb5ff}
-@media(max-width:900px){.hex-customization{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:480px){.hex-customization{grid-template-columns:1fr}}
+@media(max-width:950px){.hex-customization{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:600px){.hex-customization{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:350px){.hex-customization{grid-template-columns:1fr}}
 .hex-item input:disabled{opacity:.45;cursor:not-allowed}
 
 /* Appearance options, kept consistent with the existing dark Windhawk layout. */

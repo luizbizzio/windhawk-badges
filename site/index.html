@@ -63,7 +63,8 @@
       <div class="field color-field">
         <div class="color-header"><span class="field-label" id="color-label">Badge color</span><span id="colorName" class="color-name">Blue</span></div>
         <div id="colors" class="swatches" role="group" aria-labelledby="color-label"></div>
-        <div class="hex-customization">
+      </div>
+      <div class="hex-customization" role="group" aria-label="Badge colors">
           <div class="hex-item" id="valueField">
             <label for="valueHex">Value background</label>
             <div class="hex-row"><input id="valuePicker" type="color" value="#2563eb" aria-label="Value background"><input id="valueHex" type="text" maxlength="7" value="#2563eb" spellcheck="false" aria-label="Value background HEX"></div>
@@ -74,7 +75,11 @@
           </div>
           <div class="hex-item" id="iconBgField">
             <label for="iconBgHex">Icon background</label>
-            <div class="hex-row"><input id="iconBgPicker" type="color" value="#555555" aria-label="Icon background"><input id="iconBgHex" type="text" maxlength="7" value="#555555" spellcheck="false" aria-label="Icon background HEX"></div>
+            <div class="hex-row"><input id="iconBgPicker" type="color" value="#000000" aria-label="Icon background"><input id="iconBgHex" type="text" maxlength="7" value="#555555" spellcheck="false" aria-label="Icon background HEX"></div>
+          </div>
+          <div class="hex-item" id="iconColorField">
+            <label for="iconColorHex">Icon color</label>
+            <div class="hex-row"><input id="iconColorPicker" type="color" value="#ffffff" aria-label="Icon color"><input id="iconColorHex" type="text" maxlength="7" value="#ffffff" spellcheck="false" aria-label="Icon color HEX"></div>
           </div>
           <div class="hex-item" id="labelTextField">
             <label for="labelTextHex">Label text</label>
@@ -84,7 +89,6 @@
             <label for="valueTextHex">Value text</label>
             <div class="hex-row"><input id="valueTextPicker" type="color" value="#ffffff" aria-label="Value text"><input id="valueTextHex" type="text" maxlength="7" value="#ffffff" spellcheck="false" aria-label="Value text HEX"></div>
           </div>
-        </div>
       </div>
       <div class="field appearance-field">
         <div class="appearance-heading"><span class="field-label">Appearance</span><span class="appearance-hint">Changes apply to every badge</span></div>

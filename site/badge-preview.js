@@ -34,12 +34,13 @@ export function renderPreviewBadge(label, rawValue, color = PALETTE.blue, labelC
   const size = options.size ?? 'normal';
   const single = options.single === true;
   const icon = options.icon ?? 'none';
-  const iconBgColor = options.iconBgColor ?? (single ? color : labelColor);
+  const iconBgColor = options.iconBgColor ?? '#000000';
+  const iconColor = options.iconColor ?? '#ffffff';
   const labelTextColor = options.labelTextColor ?? '#ffffff';
   const valueTextColor = options.valueTextColor ?? '#ffffff';
   if (!ICONS.has(icon)) throw new Error('Invalid badge icon');
   if (!STYLES.has(style) || !SIZES.has(size)) throw new Error('Invalid appearance');
-  if (![color, labelColor, iconBgColor, labelTextColor, valueTextColor].every(hexColor)) {
+  if (![color, labelColor, iconBgColor, iconColor, labelTextColor, valueTextColor].every(hexColor)) {
     throw new Error('Invalid badge color');
   }
 
@@ -80,7 +81,7 @@ export function renderPreviewBadge(label, rawValue, color = PALETTE.blue, labelC
   if (icon === 'windhawk') {
     const iconX = (iconWidth - iconSize) / 2;
     const iconY = (height - iconSize) / 2;
-    parts.push(`  <g data-windhawk-icon="true" transform="translate(${iconX} ${iconY}) scale(${iconSize / 750})"><path fill="#ffffff" d="${WINDHAWK_LOGO_PATH}"/></g>`);
+    parts.push(`  <g data-windhawk-icon="true" transform="translate(${iconX} ${iconY}) scale(${iconSize / 750})"><path fill="${iconColor}" d="${WINDHAWK_LOGO_PATH}"/></g>`);
   }
   parts.push(`  <g font-family="Verdana,DejaVu Sans,sans-serif" font-size="${fontSize}" text-anchor="middle">`);
   if (!single) {

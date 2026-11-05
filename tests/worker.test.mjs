@@ -119,16 +119,21 @@ test('supports five separate visual styles and compact density', () => {
   assert.throws(() => renderBadge('Users', '10', '#ff5733', '#24292f', { labelTextColor: '<script>' }));
   assert.throws(() => renderBadge('Users', '10', '#ff5733', '#24292f', { valueTextColor: 'invalid' }));
   assert.throws(() => renderBadge('Users', '10', '#ff5733', '#24292f', { iconBgColor: '#xyzxyz' }));
+  assert.throws(() => renderBadge('Users', '10', '#ff5733', '#24292f', { iconColor: 'invalid' }));
   const customized = renderBadge('Users', '150', '#112233', '#445566', {
-    icon: 'windhawk', iconBgColor: '#778899', labelTextColor: '#aabbcc', valueTextColor: '#ddeeff',
+    icon: 'windhawk', iconBgColor: '#778899', iconColor: '#ffdd00', labelTextColor: '#aabbcc', valueTextColor: '#ddeeff',
   });
   assert.match(customized, /<rect width="27" height="22" fill="#778899"\/>/);
+  assert.match(customized, /data-windhawk-icon="true"[^>]*><path fill="#ffdd00"/);
   assert.match(customized, /<text[^>]+fill="#aabbcc">Users<\/text>/);
   assert.match(customized, /<text[^>]+fill="#ddeeff">150<\/text>/);
   const single = renderBadge('Mod name', 'Taskbar Zones', '#112233', '#445566', {
     single: true, icon: 'windhawk', iconBgColor: '#778899', valueTextColor: '#ddeeff',
   });
   assert.match(single, /fill="#778899"/);
+  const defaultIcon = renderBadge('Users', '150', '#112233', '#445566', { icon: 'windhawk' });
+  assert.match(defaultIcon, /<rect width="27" height="22" fill="#000000"\/>/);
+  assert.match(defaultIcon, /data-windhawk-icon="true"[^>]*><path fill="#ffffff"/);
   assert.match(single, /fill="#ddeeff"/);
   assert.doesNotMatch(single, /fill="#aabbcc"/);
 });
@@ -162,10 +167,11 @@ test('handles appearance, short labels, and mod badge in dynamic URLs', async ()
     assert.match(decoratedSVG, /data-windhawk-icon="true"/);
     assert.match(decoratedSVG, /4\.8\/5\.0/);
     assert.doesNotMatch(svg, /data-windhawk-icon/); // default remains unchanged
-    const customColors = await worker.fetch(new Request('https://example.workers.dev/badges/taskbar-zones/users.svg?icon=windhawk&iconBgColor=102030&labelTextColor=abcdef&valueTextColor=334455'), {}, context);
+    const customColors = await worker.fetch(new Request('https://example.workers.dev/badges/taskbar-zones/users.svg?icon=windhawk&iconBgColor=102030&iconColor=deca10&labelTextColor=abcdef&valueTextColor=334455'), {}, context);
     assert.equal(customColors.status, 200);
     const customSVG = await customColors.text();
     assert.match(customSVG, /<rect width="27" height="22" fill="#102030"\/>/);
+    assert.match(customSVG, /data-windhawk-icon="true"[^>]*><path fill="#deca10"/);
     assert.match(customSVG, /fill="#abcdef"/);
     assert.match(customSVG, /fill="#334455"/);
     const modWithIcon = await worker.fetch(new Request('https://example.workers.dev/badges/taskbar-zones/mod.svg?icon=windhawk'), {}, context);
@@ -189,7 +195,7 @@ test('handles appearance, short labels, and mod badge in dynamic URLs', async ()
     assert.doesNotMatch(missingGithubSvg, /undefined/);
     const wrongKind = await worker.fetch(new Request('https://example.workers.dev/badges/taskbar-zones/unknown.svg'), {}, context);
     assert.equal(wrongKind.status, 404);
-    for (const bad of ['style=invalid', 'size=huge', 'labelMode=bad', 'icon=unexpected', 'iconBgColor=nope', 'labelTextColor=javascript:alert(1)', 'valueTextColor=bad']) {
+    for (const bad of ['style=invalid', 'size=huge', 'labelMode=bad', 'icon=unexpected', 'iconBgColor=nope', 'iconColor=xyz', 'labelTextColor=javascript:alert(1)', 'valueTextColor=bad']) {
       const error = await worker.fetch(new Request(`https://example.workers.dev/badges/taskbar-zones/users.svg?${bad}`), {}, context);
       assert.equal(error.status, 400);
     }
@@ -221,7 +227,7 @@ test('browser preview renderer matches Worker without sending badge requests', (
         for (const icon of ['none', 'windhawk']) {
           const args = [label, value, '#ff5733', '#555555', {
             style, size, single, icon,
-            iconBgColor: '#172839', labelTextColor: '#aabbcc', valueTextColor: '#ddeeff',
+            iconBgColor: '#172839', iconColor: '#fa1020', labelTextColor: '#aabbcc', valueTextColor: '#ddeeff',
           }];
           assert.equal(renderPreviewBadge(...args), renderBadge(...args));
           const output = renderPreviewBadge(...args);
@@ -243,12 +249,16 @@ test('browser preview renderer matches Worker without sending badge requests', (
   assert.match(app, /icon: chosenIcon/);
   assert.match(app, /chosenIcon = 'windhawk'/);
   assert.match(html, /value="windhawk" selected/);
+  assert.match(html, /id="iconBgHex"[^>]*value="#000000"/);
+  const styles = readFileSync(new URL('../site/style.css', import.meta.url), 'utf8');
+  assert.match(styles, /\.hex-customization\{grid-column:1\/-1;display:grid;grid-template-columns:repeat\(6,minmax\(0,1fr\)\)/);
+  assert.match(app, /let chosenIconBgColor = '#000000'/);
   assert.match(html, /<option value="full">Full<\/option>/);
   assert.match(html, /<option value="short">Short<\/option>/);
-  for (const field of ['iconBgHex', 'labelTextHex', 'valueTextHex']) {
+  for (const field of ['iconBgHex', 'iconColorHex', 'labelTextHex', 'valueTextHex']) {
     assert.ok(html.includes(`id="${field}"`));
   }
-  for (const param of ['iconBgColor', 'labelTextColor', 'valueTextColor']) {
+  for (const param of ['iconBgColor', 'iconColor', 'labelTextColor', 'valueTextColor']) {
     assert.ok(app.includes(`url.searchParams.set('${param}'`));
   }
 });

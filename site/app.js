@@ -26,6 +26,8 @@ const labelHex = document.getElementById('labelHex');
 const labelPicker = document.getElementById('labelPicker');
 const iconBgHex = document.getElementById('iconBgHex');
 const iconBgPicker = document.getElementById('iconBgPicker');
+const iconColorHex = document.getElementById('iconColorHex');
+const iconColorPicker = document.getElementById('iconColorPicker');
 const labelTextHex = document.getElementById('labelTextHex');
 const labelTextPicker = document.getElementById('labelTextPicker');
 const valueTextHex = document.getElementById('valueTextHex');
@@ -40,7 +42,8 @@ let chosenStyle = 'classic';
 let chosenSize = 'normal';
 let chosenLabelMode = 'full';
 let chosenIcon = 'windhawk';
-let chosenIconBgColor = '#555555';
+let chosenIconBgColor = '#000000';
+let chosenIconColor = '#ffffff';
 let chosenLabelTextColor = '#ffffff';
 let chosenValueTextColor = '#ffffff';
 
@@ -60,7 +63,8 @@ function badgeUrl(modId, kind, color) {
   if (chosenLabelMode !== 'full' && kind !== 'mod') url.searchParams.set('labelMode', chosenLabelMode);
   if (chosenIcon === 'windhawk') {
     url.searchParams.set('icon', 'windhawk');
-    url.searchParams.set('iconBgColor', chosenIconBgColor.slice(1));
+    if (chosenIconBgColor !== '#000000') url.searchParams.set('iconBgColor', chosenIconBgColor.slice(1));
+    if (chosenIconColor !== '#ffffff') url.searchParams.set('iconColor', chosenIconColor.slice(1));
   }
   if (chosenLabelTextColor !== '#ffffff' && kind !== 'mod') url.searchParams.set('labelTextColor', chosenLabelTextColor.slice(1));
   if (chosenValueTextColor !== '#ffffff') url.searchParams.set('valueTextColor', chosenValueTextColor.slice(1));
@@ -127,6 +131,7 @@ function renderColors() {
   labelPicker.value = chosenLabelColor;
   for (const [hexInput, pickerInput, colorValue] of [
     [iconBgHex, iconBgPicker, chosenIconBgColor],
+    [iconColorHex, iconColorPicker, chosenIconColor],
     [labelTextHex, labelTextPicker, chosenLabelTextColor],
     [valueTextHex, valueTextPicker, chosenValueTextColor],
   ]) {
@@ -136,6 +141,8 @@ function renderColors() {
   const iconEnabled = chosenIcon === 'windhawk';
   iconBgHex.disabled = !iconEnabled;
   iconBgPicker.disabled = !iconEnabled;
+  iconColorHex.disabled = !iconEnabled;
+  iconColorPicker.disabled = !iconEnabled;
   for (const [name, hex] of Object.entries(palette)) {
     const button = document.createElement('button');
     button.className = 'swatch';
@@ -178,6 +185,7 @@ valueHex.addEventListener('change', () => {
 labelPicker.addEventListener('input', () => applyLabelHex(labelPicker.value));
 const extraColors = [
   { hex: iconBgHex, picker: iconBgPicker, get: () => chosenIconBgColor, set: c => { chosenIconBgColor = c; } },
+  { hex: iconColorHex, picker: iconColorPicker, get: () => chosenIconColor, set: c => { chosenIconColor = c; } },
   { hex: labelTextHex, picker: labelTextPicker, get: () => chosenLabelTextColor, set: c => { chosenLabelTextColor = c; } },
   { hex: valueTextHex, picker: valueTextPicker, get: () => chosenValueTextColor, set: c => { chosenValueTextColor = c; } },
 ];
@@ -229,6 +237,7 @@ function previewDataUrl(kind, label) {
     single: kind === 'mod',
     icon: chosenIcon,
     iconBgColor: chosenIconBgColor,
+    iconColor: chosenIconColor,
     labelTextColor: chosenLabelTextColor,
     valueTextColor: chosenValueTextColor,
   });

@@ -41,13 +41,14 @@ The available values come from the Windhawk catalog. User counts are not present
 
 The website provides five styles: **Classic**, **Flat**, **Flat square**, **Rounded**, and **Pill**. You can use **Normal** or **Compact** size and **Full** or **Short** labels.
 
-You can also choose one of ten preset colors or enter six-digit HEX colors for each part of the badge.
+You can also choose one of ten preset colors or enter six-digit HEX colors for each part of the badge. The color controls use the full width of the editor for a compact layout.
 
 | Option | What it changes | URL parameter |
 | --- | --- | --- |
 | Value background | Background of the value | `color` |
 | Label background | Background of the label | `labelColor` |
-| Icon background | Background behind the Windhawk logo | `iconBgColor` |
+| Icon background | Background behind the Windhawk logo (default `#000000`) | `iconBgColor` |
+| Icon color | Color of the Windhawk logo (default `#ffffff`) | `iconColor` |
 | Label text | Text color of the label | `labelTextColor` |
 | Value text | Text color of the value or mod name | `valueTextColor` |
 | Icon | Show or hide the Windhawk logo | `icon=windhawk` or `icon=none` |
@@ -70,7 +71,7 @@ https://windhawk-badges.luizbizzio.workers.dev/badges/<mod-id>/<badge>.svg
 For example, a compact rating badge with a Windhawk icon and custom colors:
 
 ```text
-https://windhawk-badges.luizbizzio.workers.dev/badges/taskbar-zones/rating.svg?style=pill&size=compact&icon=windhawk&iconBgColor=292929&labelColor=555555&color=2563eb&labelTextColor=ffffff&valueTextColor=ffffff
+https://windhawk-badges.luizbizzio.workers.dev/badges/taskbar-zones/rating.svg?style=pill&size=compact&icon=windhawk&iconBgColor=000000&iconColor=ffffff&labelColor=555555&color=2563eb&labelTextColor=ffffff&valueTextColor=ffffff
 ```
 
 A name-only badge:
