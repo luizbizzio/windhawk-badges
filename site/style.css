@@ -16,13 +16,15 @@
 @media(max-width:440px){.badge-row{flex-wrap:wrap}.badge-actions{margin-left:0;width:100%}.swatches{max-width:none}}
 
 /* HEX controls match the existing Windhawk-inspired dark UI. */
-.hex-customization{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
+.hex-customization{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:18px}
 .hex-item label{display:block;font-weight:500;color:#cfcfcf;margin:0 0 6px;font-size:12px}
 .hex-row{display:flex;gap:8px;align-items:center}
 .hex-row input[type=color]{width:36px;height:34px;cursor:pointer;border:1px solid #666;background:#181818;border-radius:4px;padding:3px;flex-shrink:0}
 .hex-row input[type=text]{width:100%;min-width:0;height:34px;font:12px Consolas,monospace;border:1px solid #555;background:#181818;border-radius:4px;color:#eee;padding:6px 9px}
 .hex-row input[type=text]:focus{outline:1px solid #5eb5ff}
+@media(max-width:900px){.hex-customization{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:480px){.hex-customization{grid-template-columns:1fr}}
+.hex-item input:disabled{opacity:.45;cursor:not-allowed}
 
 /* Appearance options, kept consistent with the existing dark Windhawk layout. */
 .appearance-field{grid-column:1/-1;border-top:1px solid #3b3b3b;padding-top:19px}

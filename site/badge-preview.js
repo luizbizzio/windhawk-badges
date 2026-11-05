@@ -28,31 +28,37 @@ function approximateWidth(value, scale = 1) {
   return Math.round([...value].reduce((sum, c) => sum + (/[MW@%]/.test(c) ? 8 : /[ilI .,:!|]/.test(c) ? 4 : /[0-9]/.test(c) ? 6.3 : 6.7), 0) * scale);
 }
 
-/** Render the original two-part badge by default; mod badges use a single segment. */
+/** Render SVG badges with optional icon segment and independent foreground/background colors. */
 export function renderPreviewBadge(label, rawValue, color = PALETTE.blue, labelColor = DEFAULT_LABEL_COLOR, options = {}) {
   const style = options.style ?? 'classic';
   const size = options.size ?? 'normal';
   const single = options.single === true;
   const icon = options.icon ?? 'none';
+  const iconBgColor = options.iconBgColor ?? (single ? color : labelColor);
+  const labelTextColor = options.labelTextColor ?? '#ffffff';
+  const valueTextColor = options.valueTextColor ?? '#ffffff';
   if (!ICONS.has(icon)) throw new Error('Invalid badge icon');
   if (!STYLES.has(style) || !SIZES.has(size)) throw new Error('Invalid appearance');
-  if (!hexColor(color) || !hexColor(labelColor)) throw new Error('Invalid badge color');
+  if (![color, labelColor, iconBgColor, labelTextColor, valueTextColor].every(hexColor)) {
+    throw new Error('Invalid badge color');
+  }
 
   const compact = size === 'compact';
   const height = compact ? 18 : 22;
   const fontSize = compact ? 10 : 11;
   const baseline = compact ? 13 : 15;
   const horizontalPadding = compact ? 7 : 11;
-  const iconSize = compact ? 15 : 18;
-  const iconSpace = icon === 'windhawk' ? iconSize + (compact ? 4 : 5) : 0;
+  const iconSize = compact ? 14 : 18;
+  const iconWidth = icon === 'windhawk' ? (compact ? 22 : 27) : 0;
   const scale = fontSize / 11;
   const titleText = String(label).slice(0, 60);
   const maxLength = single ? 72 : 52;
   const rawText = String(rawValue);
   const valueText = [...rawText].length > maxLength ? [...rawText].slice(0, maxLength - 1).join('') + '…' : rawText;
-  const left = single ? 0 : Math.max(compact ? 32 : 45, approximateWidth(titleText, scale) + 2 * horizontalPadding + iconSpace);
-  const right = Math.max(compact ? 26 : 38, approximateWidth(valueText, scale) + 2 * horizontalPadding + (single ? iconSpace : 0));
-  const width = left + right;
+  const labelWidth = single ? 0 : Math.max(compact ? 32 : 45, approximateWidth(titleText, scale) + 2 * horizontalPadding);
+  const valueWidth = Math.max(compact ? 26 : 38, approximateWidth(valueText, scale) + 2 * horizontalPadding);
+  const valueX = iconWidth + labelWidth;
+  const width = valueX + valueWidth;
   const radius = style === 'flat-square' ? 0 : style === 'pill' ? height / 2 : style === 'rounded' ? 7 : style === 'flat' ? 2 : 3;
   const aria = single ? valueText : `${titleText}: ${valueText}`;
   const title = xmlEscape(aria);
@@ -63,18 +69,24 @@ export function renderPreviewBadge(label, rawValue, color = PALETTE.blue, labelC
     '  <g clip-path="url(#badge-clip)">',
     `    <rect width="${width}" height="${height}" fill="${single ? color : labelColor}"/>`,
   ];
-  if (!single) parts.push(`    <path d="M${left} 0h${right}v${height}h-${right}z" fill="${color}"/>`);
-  // Classic retains the familiar subtle darker bottom edge; flat stays fully solid.
-  if (style === 'classic') parts.push(`    <path d="M0 ${height - 2}h${width}v2H0z" fill="#000000" fill-opacity="0.09"/>`);
+  if (!single) parts.push(`    <path d="M${valueX} 0h${valueWidth}v${height}h-${valueWidth}z" fill="${color}"/>`);
+  if (icon === 'windhawk') {
+    parts.push(`    <rect width="${iconWidth}" height="${height}" fill="${iconBgColor}"/>`);
+  }
+  if (style === 'classic') {
+    parts.push(`    <path d="M0 ${height - 2}h${width}v2H0z" fill="#000000" fill-opacity="0.09"/>`);
+  }
   parts.push('  </g>');
   if (icon === 'windhawk') {
-    const iconX = compact ? 6 : 7;
+    const iconX = (iconWidth - iconSize) / 2;
     const iconY = (height - iconSize) / 2;
     parts.push(`  <g data-windhawk-icon="true" transform="translate(${iconX} ${iconY}) scale(${iconSize / 750})"><path fill="#ffffff" d="${WINDHAWK_LOGO_PATH}"/></g>`);
   }
-  parts.push(`  <g fill="#ffffff" font-family="Verdana,DejaVu Sans,sans-serif" font-size="${fontSize}" text-anchor="middle">`);
-  if (!single) parts.push(`    <text x="${iconSpace + (left - iconSpace) / 2}" y="${baseline}">${xmlEscape(titleText)}</text>`);
-  parts.push(`    <text x="${left + (single ? iconSpace + (right - iconSpace) / 2 : right / 2)}" y="${baseline}">${xmlEscape(valueText)}</text>`);
+  parts.push(`  <g font-family="Verdana,DejaVu Sans,sans-serif" font-size="${fontSize}" text-anchor="middle">`);
+  if (!single) {
+    parts.push(`    <text x="${iconWidth + labelWidth / 2}" y="${baseline}" fill="${labelTextColor}">${xmlEscape(titleText)}</text>`);
+  }
+  parts.push(`    <text x="${valueX + valueWidth / 2}" y="${baseline}" fill="${valueTextColor}">${xmlEscape(valueText)}</text>`);
   parts.push('  </g>', '</svg>', '');
   return parts.join('\n');
 }

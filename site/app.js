@@ -24,6 +24,12 @@ const valueHex = document.getElementById('valueHex');
 const valuePicker = document.getElementById('valuePicker');
 const labelHex = document.getElementById('labelHex');
 const labelPicker = document.getElementById('labelPicker');
+const iconBgHex = document.getElementById('iconBgHex');
+const iconBgPicker = document.getElementById('iconBgPicker');
+const labelTextHex = document.getElementById('labelTextHex');
+const labelTextPicker = document.getElementById('labelTextPicker');
+const valueTextHex = document.getElementById('valueTextHex');
+const valueTextPicker = document.getElementById('valueTextPicker');
 let mods = [];
 let kinds = {};
 let palette = {};
@@ -33,7 +39,10 @@ let chosenLabelColor = '#555555';
 let chosenStyle = 'classic';
 let chosenSize = 'normal';
 let chosenLabelMode = 'full';
-let chosenIcon = 'none';
+let chosenIcon = 'windhawk';
+let chosenIconBgColor = '#555555';
+let chosenLabelTextColor = '#ffffff';
+let chosenValueTextColor = '#ffffff';
 
 function badgeUrl(modId, kind, color) {
   const path = palette[color]
@@ -41,14 +50,20 @@ function badgeUrl(modId, kind, color) {
     : `badges/${encodeURIComponent(modId)}/${encodeURIComponent(kind)}.svg`;
   // Pages has legacy static badges, but all custom appearance features need the Worker.
   if (!workerBase && (kind === 'mod' || !palette[color] || chosenLabelColor !== '#555555' ||
-      chosenStyle !== 'classic' || chosenSize !== 'normal' || chosenLabelMode !== 'full' || chosenIcon !== 'none')) return null;
+      chosenStyle !== 'classic' || chosenSize !== 'normal' || chosenLabelMode !== 'full' || chosenIcon !== 'none' ||
+      chosenLabelTextColor !== '#ffffff' || chosenValueTextColor !== '#ffffff')) return null;
   const url = new URL(path, workerBase ? workerBase + '/' : baseUrl);
   if (!palette[color]) url.searchParams.set('color', color.replace('#', ''));
   if (chosenLabelColor !== '#555555' && kind !== 'mod') url.searchParams.set('labelColor', chosenLabelColor.slice(1));
   if (chosenStyle !== 'classic') url.searchParams.set('style', chosenStyle);
   if (chosenSize !== 'normal') url.searchParams.set('size', chosenSize);
   if (chosenLabelMode !== 'full' && kind !== 'mod') url.searchParams.set('labelMode', chosenLabelMode);
-  if (chosenIcon === 'windhawk') url.searchParams.set('icon', 'windhawk');
+  if (chosenIcon === 'windhawk') {
+    url.searchParams.set('icon', 'windhawk');
+    url.searchParams.set('iconBgColor', chosenIconBgColor.slice(1));
+  }
+  if (chosenLabelTextColor !== '#ffffff' && kind !== 'mod') url.searchParams.set('labelTextColor', chosenLabelTextColor.slice(1));
+  if (chosenValueTextColor !== '#ffffff') url.searchParams.set('valueTextColor', chosenValueTextColor.slice(1));
   if (kind === 'github') url.searchParams.set('v', '2');
   return url.href;
 }
@@ -110,6 +125,17 @@ function renderColors() {
   valuePicker.value = palette[chosenColor] || chosenColor;
   labelHex.value = chosenLabelColor;
   labelPicker.value = chosenLabelColor;
+  for (const [hexInput, pickerInput, colorValue] of [
+    [iconBgHex, iconBgPicker, chosenIconBgColor],
+    [labelTextHex, labelTextPicker, chosenLabelTextColor],
+    [valueTextHex, valueTextPicker, chosenValueTextColor],
+  ]) {
+    hexInput.value = colorValue;
+    pickerInput.value = colorValue;
+  }
+  const iconEnabled = chosenIcon === 'windhawk';
+  iconBgHex.disabled = !iconEnabled;
+  iconBgPicker.disabled = !iconEnabled;
   for (const [name, hex] of Object.entries(palette)) {
     const button = document.createElement('button');
     button.className = 'swatch';
@@ -150,12 +176,32 @@ valueHex.addEventListener('change', () => {
   else valueHex.value = palette[chosenColor] || chosenColor;
 });
 labelPicker.addEventListener('input', () => applyLabelHex(labelPicker.value));
+const extraColors = [
+  { hex: iconBgHex, picker: iconBgPicker, get: () => chosenIconBgColor, set: c => { chosenIconBgColor = c; } },
+  { hex: labelTextHex, picker: labelTextPicker, get: () => chosenLabelTextColor, set: c => { chosenLabelTextColor = c; } },
+  { hex: valueTextHex, picker: valueTextPicker, get: () => chosenValueTextColor, set: c => { chosenValueTextColor = c; } },
+];
+for (const field of extraColors) {
+  const apply = raw => {
+    const hex = validHex(raw);
+    if (!hex) return;
+    field.set(hex);
+    renderColors();
+    renderBadges();
+  };
+  field.picker.addEventListener('input', () => apply(field.picker.value));
+  field.hex.addEventListener('change', () => {
+    if (validHex(field.hex.value)) apply(field.hex.value);
+    else field.hex.value = field.get();
+  });
+}
 for (const [element, key] of [[styleSelect, 'style'], [sizeSelect, 'size'], [labelsSelect, 'labels'], [iconSelect, 'icon']]) {
   element.addEventListener('change', () => {
     if (key === 'style') chosenStyle = styleSelect.value;
     else if (key === 'size') chosenSize = sizeSelect.value;
     else if (key === 'labels') chosenLabelMode = labelsSelect.value;
     else chosenIcon = iconSelect.value;
+    if (key === 'icon') renderColors();
     renderBadges();
   });
 }
@@ -182,6 +228,9 @@ function previewDataUrl(kind, label) {
     size: chosenSize,
     single: kind === 'mod',
     icon: chosenIcon,
+    iconBgColor: chosenIconBgColor,
+    labelTextColor: chosenLabelTextColor,
+    valueTextColor: chosenValueTextColor,
   });
   return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
 }
@@ -280,6 +329,7 @@ async function start() {
     kinds.github = 'GitHub';
     palette = catalog.palette;
     chosenColor = catalog.defaultColor || 'blue';
+    iconSelect.value = chosenIcon;
     if (!palette[chosenColor] || Object.keys(palette).length !== 10) throw new Error('Invalid palette');
     renderColors();
     document.getElementById('updated').textContent = `${mods.length.toLocaleString()} mods · Updated ${new Date(catalog.generatedAt).toLocaleDateString()}`;
