@@ -315,7 +315,7 @@ test('site uses the official Windhawk logo and accessible footer links', () => {
   assert.match(html, /<nav class="footer-links" aria-label="Footer links">/);
   assert.match(html, /href="https:\/\/github\.com\/luizbizzio\/windhawk-badges\/issues"/);
   assert.match(html, /id="updated" class="footer-updated"/);
-  assert.match(styles, /\.footer-bottom\{/);
+  assert.match(styles, /\.footer-bottom\s*\{/);
 });
 
 test('site header and favicon use the official Windhawk SVG', () => {
@@ -343,7 +343,7 @@ test('catalog summary is visible at the top and shares the footer data', () => {
   assert.match(app, /const catalogStatus =/);
   assert.match(app, /getElementById\('catalogSummary'\)\.textContent = catalogStatus/);
   assert.match(app, /getElementById\('updated'\)\.textContent = catalogStatus/);
-  assert.match(css, /\.catalog-summary\{/);
+  assert.match(css, /\.catalog-summary\s*\{/);
   assert.match(css, /\.page-heading\s*\{display:flex/);
   assert.match(html, /class="footer-brand"/);
   assert.match(html, /class="footer-brand"[\s\S]*?src="\.\/assets\/windhawk-logo\.svg"/);
