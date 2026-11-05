@@ -373,3 +373,10 @@ test('GitHub Pages is metadata-only, and Worker serves all badge URLs', () => {
   assert.match(html, /rel="canonical" href="https:\/\/windhawk-badges\.luizbizzio\.com\//);
   assert.match(readme, /does \*\*not\*\* generate or host static badge SVGs/);
 });
+
+test('footer has more vertical space on desktop and mobile', () => {
+  const css = readFileSync(new URL('../site/style.css', import.meta.url), 'utf8');
+  assert.match(css, /\.footer-inner \{[^}]*padding:42px 28px 30px\}/);
+  assert.match(css, /\.footer-bottom \{[^}]*margin-top:36px;padding-top:19px/);
+  assert.match(css, /@media\(max-width:600px\) \{[\s\S]*?\.footer-inner \{padding:32px 16px 26px\}/);
+});

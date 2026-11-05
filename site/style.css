@@ -123,16 +123,16 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
 
 /* Footer remains secondary, with the catalog status repeated here. */
 .footer {border-top:1px solid #333;background:#191919}
-.footer-inner {max-width:1160px;margin:0 auto;padding:24px 28px 17px}
-.footer-main {display:flex;align-items:center;justify-content:space-between;gap:18px}
-.footer-brand {display:flex;align-items:center;gap:10px}
-.footer-brand .brand-mark {width:30px;height:30px}
-.footer-brand .brand-mark img {width:24px;height:24px}
-.footer-brand strong {font-size:12px;font-weight:600;color:#e2e2e2}
-.footer-brand p {font-size:11px;color:#949494;margin:2px 0 0}
-.footer-links {display:flex;justify-content:flex-end;flex-wrap:wrap;gap:9px 20px}
-.footer-links a {font-size:11px;color:#b2b2b2}
-.footer-bottom {display:flex;justify-content:space-between;align-items:center;gap:12px 24px;margin-top:19px;padding-top:13px;border-top:1px solid #343434;color:#8e8e8e;font-size:11px}
+.footer-inner {max-width:1160px;margin:0 auto;padding:42px 28px 30px}
+.footer-main {display:flex;align-items:center;justify-content:space-between;gap:26px}
+.footer-brand {display:flex;align-items:center;gap:13px}
+.footer-brand .brand-mark {width:40px;height:40px;border-radius:6px}
+.footer-brand .brand-mark img {width:31px;height:31px}
+.footer-brand strong {font-size:14px;font-weight:600;color:#e2e2e2}
+.footer-brand p {font-size:12px;color:#a4a4a4;margin:4px 0 0}
+.footer-links {display:flex;justify-content:flex-end;flex-wrap:wrap;gap:12px 23px}
+.footer-links a {font-size:12px;color:#bcbcbc}
+.footer-bottom {display:flex;justify-content:space-between;align-items:center;gap:12px 24px;margin-top:36px;padding-top:19px;border-top:1px solid #343434;color:#9a9a9a;font-size:11px}
 .footer-bottom a {color:#aeb6bc}
 .footer-updated {font-variant-numeric:tabular-nums;white-space:nowrap}
 
@@ -161,10 +161,10 @@ button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible
   .hex-customization {grid-template-columns:repeat(2,minmax(0,1fr));gap:13px 14px}
   .appearance-controls {grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
   .output-header {align-items:flex-start;flex-wrap:wrap}
-  .footer-inner {padding:22px 16px 16px}
+  .footer-inner {padding:32px 16px 26px}
   .footer-main,.footer-bottom {align-items:flex-start;flex-direction:column;gap:14px}
   .footer-links {justify-content:flex-start;gap:9px 16px}
-  .footer-bottom {margin-top:16px}
+  .footer-bottom {margin-top:26px;padding-top:18px}
 }
 @media(max-width:390px) {
   .badge-row {flex-wrap:wrap;gap:9px}
