@@ -1,0 +1,16 @@
+{
+  "name": "windhawk-badges",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Dynamic SVG badge API for a GitHub Pages frontend",
+  "scripts": {
+    "test": "node --test tests/worker.test.mjs",
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  },
+  "license": "Apache-2.0"
+}
