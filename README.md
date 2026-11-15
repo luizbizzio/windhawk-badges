@@ -12,13 +12,15 @@ Create live SVG badges, choose your colors and style, and copy ready-to-use Mark
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 
-[![Windhawk users](https://windhawk-badges.luizbizzio.workers.dev/badges/taskbar-zones/users.svg?icon=windhawk&labelMode=short)](https://windhawk.net/mods/taskbar-zones)
-[![Windhawk rating](https://windhawk-badges.luizbizzio.workers.dev/badges/taskbar-zones/rating.svg?icon=windhawk&labelMode=short)](https://windhawk.net/mods/taskbar-zones)
-[![Mod version](https://windhawk-badges.luizbizzio.workers.dev/badges/taskbar-zones/version.svg?icon=windhawk)](https://windhawk.net/mods/taskbar-zones)
-
-</div>
+[![Windhawk users](https://windhawk-badges.luizbizzio.workers.dev/badges/recycle-bin-file-preview/users.svg?icon=windhawk&labelMode=short)](https://windhawk.net/mods/recycle-bin-file-preview)
+[![Windhawk rating](https://windhawk-badges.luizbizzio.workers.dev/badges/recycle-bin-file-preview/rating.svg?icon=windhawk&labelMode=short)](https://windhawk.net/mods/recycle-bin-file-preview)
+[![Mod version](https://windhawk-badges.luizbizzio.workers.dev/badges/recycle-bin-file-preview/version.svg?icon=windhawk)](https://windhawk.net/mods/recycle-bin-file-preview)
 
 Windhawk Badges is a free, independent community tool. It is **not affiliated with or endorsed by Windhawk**.
+
+<img src="assets/windhawk-badges-demo.png" alt="Windhawk Badges Demo" width="1200">
+
+</div>
 
 ## Get started
 
